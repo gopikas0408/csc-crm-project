@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC CRM - Fee</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background:#f4f6fb;
+        }
+
+        .navbar {
+            background:#1e2a44;
+            padding:12px;
+        }
+
+        .navbar a {
+            color:white;
+            margin-right:20px;
+            text-decoration:none;
+        }
+
+        .card-box {
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            margin-top:25px;
+        }
+
+        .top-card {
+            padding:20px;
+            border-radius:10px;
+            color:white;
+        }
+
+        .green { background:#28a745; }
+        .red { background:#dc3545; }
+        .blue { background:#007bff; }
+
+        label {
+            font-weight:500;
+            margin-top:10px;
+        }
+
+        input, select, textarea {
+            width:100%;
+            padding:8px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+
+        .badge-upi { background:#dcd0ff; }
+        .badge-cash { background:#ffe8a1; }
+
+    </style>
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR -->
+<div class="navbar">
+    <span class="text-white fw-bold">CSC CRM — Admission Module</span>
+    <div class="float-end">
+        <a href="/">Student Registration</a>
+        <a href="#">Student List</a>
+        <a href="/fee/">Fee Management</a>
+        <a href="#">Search & Filter</a>
+    </div>
+</div>
+
+
+<div class="container">
+
+    <!-- 🔍 SEARCH -->
+    <form method="GET" class="mt-4">
+        <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
+    </form>
+
+    <!-- 📊 DASHBOARD -->
+    <div class="row mt-3 text-center">
+
+        <div class="col-md-4">
+            <div class="top-card green">
+                <h6>Total Collected</h6>
+                <h4>₹{{ total_amount }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="top-card red">
+                <h6>Outstanding Balance</h6>
+                <h4>₹{{ total_pending }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="top-card blue">
+                <h6>Receipts Generated</h6>
+                <h4>{{ payments|length }}</h4>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 💰 FORM -->
+    <div class="card-box">
+
+        <h5 class="mb-3">💰 Record New Payment</h5>
+        <p class="text-muted">Enter fee details & generate receipt</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+
+                <!-- LEFT -->
+                <div class="col-md-6">
+
+                    <label>Student Name</label>
+                    {{ form.student }}
+
+                    <label>Amount Paid (₹)</label>
+                    {{ form.amount }}
+
+                    <label>Transaction / Reference ID</label>
+                    {{ form.reference_id }}
+
+                </div>
+
+                <!-- RIGHT -->
+                <div class="col-md-6">
+
+                    <label>Payment Date</label>
+                    {{ form.payment_date }}
+
+                    <label>Payment Mode</label>
+                    {{ form.payment_mode }}
+
+                    <label>Remarks</label>
+                    {{ form.remarks }}
+
+                </div>
+
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-end mt-4">
+
+                <button name="action" value="save" class="btn btn-secondary me-2">
+                    Save Only
+                </button>
+
+                <button name="action" value="pdf" class="btn btn-primary">
+                    📄 Save & Generate Receipt PDF
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- 📋 TABLE -->
+    <div class="card-box">
+
+        <h5>Recent Payment Log</h5>
+
+        <table class="table text-center align-middle">
+
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Mode</th>
+                    <th>Receipt</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for p in payments %}
+                <tr>
+
+                    <td>
+                        <a href="{% url 'student_detail' p.student.id %}">
+                            {{ p.student.name }}
+                        </a>
+                    </td>
+
+                    <td>{{ p.payment_date }}</td>
+
+                    <td>₹{{ p.amount }}</td>
+
+                    <td>
+                        {% if p.payment_mode == 'UPI' %}
+                            <span class="badge badge-upi">UPI</span>
+                        {% elif p.payment_mode == 'Cash' %}
+                            <span class="badge badge-cash">Cash</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ p.payment_mode }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">
+                            View
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

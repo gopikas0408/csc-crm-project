@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Admission</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a5acd, #7b68ee);
+            min-height: 100vh;
+        }
+
+        .box {
+            max-width: 420px;
+            margin: auto;
+            margin-top: 60px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="box shadow">
+
+        <h3 class="text-center mb-3">🎓 Student Admission</h3>
+
+        <!-- ✅ SUCCESS / INFO MESSAGE -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- ✅ CLEAN FORM ERRORS -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>⚠ {{ field.label }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- NAME -->
+            <label>Full Name</label>
+            {{ form.name }}
+
+            <!-- EMAIL -->
+            <label>Email</label>
+            {{ form.email }}
+
+            <!-- PHONE -->
+            <label>Phone</label>
+            {{ form.phone }}
+
+            <!-- COURSE -->
+            <label>Course</label>
+            {{ form.course }}
+
+            <!-- GENDER -->
+            <label>Gender</label>
+            <div>
+                {{ form.gender }}
+            </div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                Submit
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>
