@@ -1,224 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSC CRM - Fee</title>
+<meta charset="UTF-8">
+<title>CSC CRM - Fee</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        body {
-            background:#f4f6fb;
-        }
+<style>
 
-        .navbar {
-            background:#1e2a44;
-            padding:12px;
-        }
+body {
+    background:#eef2f7;
+    font-family: 'Segoe UI';
+}
 
-        .navbar a {
-            color:white;
-            margin-right:20px;
-            text-decoration:none;
-        }
+/* NAVBAR */
+.navbar {
+    background:#1e2a44;
+    padding:15px;
+}
 
-        .card-box {
-            background:white;
-            padding:25px;
-            border-radius:12px;
-            margin-top:25px;
-        }
+.navbar a {
+    color:white;
+    margin-right:20px;
+    text-decoration:none;
+    font-weight:500;
+}
 
-        .top-card {
-            padding:20px;
-            border-radius:10px;
-            color:white;
-        }
+/* CARDS */
+.card-box {
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    margin-top:25px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
 
-        .green { background:#28a745; }
-        .red { background:#dc3545; }
-        .blue { background:#007bff; }
+.top-card {
+    padding:20px;
+    border-radius:12px;
+    color:white;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
 
-        label {
-            font-weight:500;
-            margin-top:10px;
-        }
+.green { background:#28a745; }
+.red { background:#dc3545; }
+.blue { background:#007bff; }
 
-        input, select, textarea {
-            width:100%;
-            padding:8px;
-            border-radius:6px;
-            border:1px solid #ccc;
-        }
+/* FORM */
+label {
+    font-weight:500;
+    margin-top:10px;
+}
 
-        .badge-upi { background:#dcd0ff; }
-        .badge-cash { background:#ffe8a1; }
+input, select, textarea {
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
 
-    </style>
+/* BUTTON */
+.btn-primary {
+    background:#0d6efd;
+    border:none;
+}
+
+.btn-secondary {
+    background:#6c757d;
+}
+
+/* TABLE */
+.table {
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.table thead {
+    background:#1e2a44;
+    color:white;
+}
+
+/* BADGES */
+.badge-upi { background:#dcd0ff; }
+.badge-cash { background:#ffe8a1; }
+
+</style>
 </head>
 
 <body>
 
-<!-- 🔥 NAVBAR -->
+<!-- NAVBAR -->
 <div class="navbar">
-    <span class="text-white fw-bold">CSC CRM — Admission Module</span>
+    <span class="text-white fw-bold">CSC CRM</span>
     <div class="float-end">
-        <a href="/">Student Registration</a>
-        <a href="#">Student List</a>
+        <a href="/">Admission</a>
         <a href="/fee/">Fee Management</a>
-        <a href="#">Search & Filter</a>
     </div>
 </div>
 
-
 <div class="container">
 
-    <!-- 🔍 SEARCH -->
-    <form method="GET" class="mt-4">
-        <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
+<!-- SEARCH -->
+<form method="GET" class="mt-4">
+    <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
+</form>
+
+<!-- FILTER -->
+<div class="mt-2">
+    <a href="/fee/" class="btn btn-secondary btn-sm">All</a>
+    <a href="/fee/?filter=pending" class="btn btn-danger btn-sm">Pending</a>
+    <a href="/fee/?filter=paid" class="btn btn-success btn-sm">Paid</a>
+</div>
+
+<!-- DASHBOARD -->
+<div class="row mt-3 text-center">
+
+    <div class="col-md-4">
+        <div class="top-card green">
+            <h6>Total Collected</h6>
+            <h4>₹{{ total_amount }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="top-card red">
+            <h6>Outstanding Balance</h6>
+            <h4>₹{{ total_pending }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="top-card blue">
+            <h6>Receipts Generated</h6>
+            <h4>{{ payments|length }}</h4>
+        </div>
+    </div>
+
+</div>
+
+<!-- FORM -->
+<div class="card-box">
+    <h5>💰 Record New Payment</h5>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <label>Student Name</label>
+                {{ form.student }}
+
+                <label>Amount</label>
+                {{ form.amount }}
+
+                <label>Reference ID</label>
+                {{ form.reference_id }}
+            </div>
+
+            <div class="col-md-6">
+                <label>Date</label>
+                {{ form.payment_date }}
+
+                <label>Mode</label>
+                {{ form.payment_mode }}
+
+                <label>Remarks</label>
+                {{ form.remarks }}
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <button name="action" value="save" class="btn btn-secondary me-2">Save</button>
+            <button name="action" value="pdf" class="btn btn-primary">Save & PDF</button>
+        </div>
+
     </form>
+</div>
 
-    <!-- 📊 DASHBOARD -->
-    <div class="row mt-3 text-center">
+<!-- PAYMENT LOG -->
+<div class="card-box">
+    <h5>Payment History</h5>
 
-        <div class="col-md-4">
-            <div class="top-card green">
-                <h6>Total Collected</h6>
-                <h4>₹{{ total_amount }}</h4>
-            </div>
-        </div>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Mode</th>
+                <th>Receipt</th>
+            </tr>
+        </thead>
 
-        <div class="col-md-4">
-            <div class="top-card red">
-                <h6>Outstanding Balance</h6>
-                <h4>₹{{ total_pending }}</h4>
-            </div>
-        </div>
+        <tbody>
+            {% for p in payments %}
+            <tr>
+                <td>
+                    <a href="{% url 'student_detail' p.student.id %}">
+                        {{ p.student.name }}
+                    </a>
+                </td>
+                <td>{{ p.payment_date }}</td>
+                <td>₹{{ p.amount }}</td>
+                <td>{{ p.payment_mode }}</td>
+                <td>
+                    <a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-        <div class="col-md-4">
-            <div class="top-card blue">
-                <h6>Receipts Generated</h6>
-                <h4>{{ payments|length }}</h4>
-            </div>
-        </div>
+<!-- STUDENT STATUS -->
+<div class="card-box">
+    <h5>Student Fee Status</h5>
 
-    </div>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Pending</th>
+                <th>Status</th>
+            </tr>
+        </thead>
 
-    <!-- 💰 FORM -->
-    <div class="card-box">
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ s.name }}</td>
+                <td>₹{{ s.total_fee }}</td>
+                <td>₹{{ s.total_paid }}</td>
+                <td style="color:{% if s.balance == 0 %}green{% else %}red{% endif %}">
+                    ₹{{ s.balance }}
+                </td>
+                <td>
+                    {% if s.balance == 0 %}
+                        <span class="badge bg-success">Paid</span>
+                    {% else %}
+                        <span class="badge bg-danger">Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
 
-        <h5 class="mb-3">💰 Record New Payment</h5>
-        <p class="text-muted">Enter fee details & generate receipt</p>
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="row">
-
-                <!-- LEFT -->
-                <div class="col-md-6">
-
-                    <label>Student Name</label>
-                    {{ form.student }}
-
-                    <label>Amount Paid (₹)</label>
-                    {{ form.amount }}
-
-                    <label>Transaction / Reference ID</label>
-                    {{ form.reference_id }}
-
-                </div>
-
-                <!-- RIGHT -->
-                <div class="col-md-6">
-
-                    <label>Payment Date</label>
-                    {{ form.payment_date }}
-
-                    <label>Payment Mode</label>
-                    {{ form.payment_mode }}
-
-                    <label>Remarks</label>
-                    {{ form.remarks }}
-
-                </div>
-
-            </div>
-
-            <!-- BUTTONS -->
-            <div class="d-flex justify-content-end mt-4">
-
-                <button name="action" value="save" class="btn btn-secondary me-2">
-                    Save Only
-                </button>
-
-                <button name="action" value="pdf" class="btn btn-primary">
-                    📄 Save & Generate Receipt PDF
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-    <!-- 📋 TABLE -->
-    <div class="card-box">
-
-        <h5>Recent Payment Log</h5>
-
-        <table class="table text-center align-middle">
-
-            <thead>
-                <tr>
-                    <th>Student</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Mode</th>
-                    <th>Receipt</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                {% for p in payments %}
-                <tr>
-
-                    <td>
-                        <a href="{% url 'student_detail' p.student.id %}">
-                            {{ p.student.name }}
-                        </a>
-                    </td>
-
-                    <td>{{ p.payment_date }}</td>
-
-                    <td>₹{{ p.amount }}</td>
-
-                    <td>
-                        {% if p.payment_mode == 'UPI' %}
-                            <span class="badge badge-upi">UPI</span>
-                        {% elif p.payment_mode == 'Cash' %}
-                            <span class="badge badge-cash">Cash</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ p.payment_mode }}</span>
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        <a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">
-                            View
-                        </a>
-                    </td>
-
-                </tr>
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
+    </table>
+</div>
 
 </div>
 

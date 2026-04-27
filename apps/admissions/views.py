@@ -21,10 +21,10 @@ def admission_form(request):
         if form.is_valid():
             student = form.save()
 
-            # ✅ SUCCESS MESSAGE
+            #  SUCCESS MESSAGE
             messages.success(request, "Admission submitted successfully 🎉")
 
-            # 📧 STUDENT EMAIL
+            #  STUDENT EMAIL
             try:
                 send_mail(
                     '🎓 Admission Confirmation',
@@ -45,7 +45,7 @@ Thank you 💙
             except Exception as e:
                 print("EMAIL ERROR:", e)
 
-            # 📧 ADMIN EMAIL
+            #  ADMIN EMAIL
             try:
                 send_mail(
                     '🚨 New Admission Alert',
@@ -64,11 +64,11 @@ Course: {student.course}
             except Exception as e:
                 print("ADMIN EMAIL ERROR:", e)
 
-            # ✅ REDIRECT
+            #  REDIRECT
             return redirect('/fee/')
 
         else:
-            # 🔥 FIXED LINE (IMPORTANT)
+            #  FIXED LINE (IMPORTANT)
             messages.error(request, "Please correct the errors below.")
 
     else:
@@ -78,27 +78,38 @@ Course: {student.course}
 
 
 # ------------------ FEE MANAGEMENT ------------------
+
 def fee_management(request):
     query = request.GET.get('q')
+    filter_type = request.GET.get('filter')
 
     payments = FeePayment.objects.all().order_by('-id')
 
+    #  SEARCH
     if query:
         payments = payments.filter(Q(student__name__icontains=query))
 
-    # 💰 TOTAL
+    #  TOTAL COLLECTION
     total_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
 
-    # 🔴 PENDING
+    #  STUDENTS LIST
     students = Student.objects.all()
-    total_pending = 0
 
-    for s in students:
-        paid = s.payments.aggregate(total=Sum('amount'))['total'] or 0
-        total_pending += (s.total_fee - paid)
+    #  FILTER LOGIC
+    if filter_type == "pending":
+        students = [s for s in students if s.balance() > 0]
+
+    elif filter_type == "paid":
+        students = [s for s in students if s.balance() == 0]
+
+    #  TOTAL PENDING
+    total_pending = 0
+    for s in Student.objects.all():
+        total_pending += s.balance()
 
     form = FeePaymentForm()
 
+    # ------------------ SAVE PAYMENT ------------------
     if request.method == 'POST':
         form = FeePaymentForm(request.POST)
         action = request.POST.get('action')
@@ -106,7 +117,7 @@ def fee_management(request):
         if form.is_valid():
             payment = form.save()
 
-            # 🔥 PDF CREATE
+            #  PDF CREATE
             buffer = BytesIO()
             p = canvas.Canvas(buffer)
 
@@ -119,7 +130,7 @@ def fee_management(request):
             p.save()
             buffer.seek(0)
 
-            # 📧 EMAIL WITH PDF
+            #  EMAIL WITH PDF
             try:
                 email = EmailMessage(
                     subject="Fee Receipt",
@@ -127,27 +138,28 @@ def fee_management(request):
                     from_email='gopikas04082005@gmail.com',
                     to=[payment.student.email],
                 )
-
                 email.attach('receipt.pdf', buffer.read(), 'application/pdf')
                 email.send()
             except Exception as e:
-                print("FEE EMAIL ERROR:", e)
+                print("EMAIL ERROR:", e)
 
-            # 🔥 BUTTON LOGIC
+            #  BUTTON ACTION
             if action == 'pdf':
                 return redirect(f'/pdf/{payment.id}/')
 
             return redirect('/fee/')
 
         else:
-            print("FEE FORM ERROR:", form.errors)
+            print("FORM ERROR:", form.errors)
 
     return render(request, 'admissions/fee.html', {
         'form': form,
         'payments': payments,
+        'students': students,   
         'total_amount': total_amount,
         'total_pending': total_pending,
-        'query': query
+        'query': query,
+        'filter_type': filter_type
     })
 
 
@@ -202,8 +214,8 @@ def student_detail(request, id):
 
     payments = student.payments.all()
 
-    total_paid = payments.aggregate(total=Sum('amount'))['total'] or 0
-    balance = student.total_fee - total_paid
+    total_paid = student.total_paid()
+    balance = student.balance()
 
     return render(request, 'admissions/student_detail.html', {
         'student': student,

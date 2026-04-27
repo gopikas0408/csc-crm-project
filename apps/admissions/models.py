@@ -3,7 +3,11 @@ from django.db.models import Sum
 
 
 # ------------------ STUDENT MODEL ------------------
+
+
+
 class Student(models.Model):
+
     COURSE_CHOICES = [
         ('Python Developer', 'Python Developer'),
         ('Java Developer', 'Java Developer'),
@@ -24,20 +28,43 @@ class Student(models.Model):
     course = models.CharField(max_length=100, choices=COURSE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
 
-    total_fee = models.IntegerField(default=0)   # 💰 Total course fee
+    total_fee = models.IntegerField(default=20000)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-    # 🔥 TOTAL PAID (OPTIMIZED)
+    # AUTO SET COURSE BASED FEE
+    def save(self, *args, **kwargs):
+
+        if self.course == "Python Developer":
+            self.total_fee = 20000
+
+        elif self.course == "Java Developer":
+            self.total_fee = 22000
+
+        elif self.course == "Web Development":
+            self.total_fee = 18000
+
+        elif self.course == "Data Analyst":
+            self.total_fee = 25000
+
+        elif self.course == "Data Scientist":
+            self.total_fee = 30000
+
+        elif self.course == "AI & ML":
+            self.total_fee = 35000
+
+        super().save(*args, **kwargs)
+
+    #  TOTAL PAID
     def total_paid(self):
         return self.payments.aggregate(total=Sum('amount'))['total'] or 0
 
-    # 🔥 BALANCE
+    #  BALANCE (NO NEGATIVE)
     def balance(self):
-        return self.total_fee - self.total_paid()
+        return max(self.total_fee - self.total_paid(), 0)
 
 
 # ------------------ FEE PAYMENT MODEL ------------------
@@ -63,7 +90,7 @@ class FeePayment(models.Model):
         choices=PAYMENT_CHOICES
     )
 
-    # ✅ Manual date selection (UI will work properly)
+    #  Manual date selection (UI will work properly)
     payment_date = models.DateField()
 
     reference_id = models.CharField(max_length=100, blank=True, null=True)
