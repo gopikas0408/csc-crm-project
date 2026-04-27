@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,13 +70,11 @@ input, select, textarea {
     padding: 10px;
     border-radius: 10px;
     border: 1px solid #d6dce7;
-    transition: 0.3s;
 }
 
 input:focus, select:focus, textarea:focus {
     border-color: #2b6cb0;
     box-shadow: 0 0 0 2px rgba(43,108,176,0.1);
-    outline: none;
 }
 
 /* BUTTON */
@@ -85,7 +82,6 @@ input:focus, select:focus, textarea:focus {
     background: #2b6cb0;
     border: none;
     border-radius: 10px;
-    transition: 0.3s;
 }
 
 .btn-primary:hover {
@@ -98,42 +94,36 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* TABLE */
-.table {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
 .table thead {
     background: #1e2a44;
     color: white;
-}
-
-.table tbody tr {
-    transition: 0.2s;
 }
 
 .table tbody tr:hover {
     background: #f1f5ff;
 }
 
-/* STATUS COLORS */
-.text-success {
-    font-weight: bold;
+/* CLICKABLE STUDENT */
+.student-link {
+    color: #1e2a44;
+    font-weight: 600;
+    text-decoration: none;
 }
 
-.text-danger {
-    font-weight: bold;
+.student-link:hover {
+    color: #ffd400;
+    text-decoration: underline;
 }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
 
     .navbar {
+        flex-direction: column;
         text-align: center;
     }
 
     .navbar div {
-        width: 100%;
         margin-top: 10px;
     }
 
@@ -146,6 +136,21 @@ input:focus, select:focus, textarea:focus {
         margin-bottom: 15px;
     }
 }
+/*excel button*/
+.export-btn {
+    background: #28a745;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 500;
+    transition: 0.3s;
+    
+}
+
+.export-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
 
 </style>
 </head>
@@ -154,7 +159,9 @@ input:focus, select:focus, textarea:focus {
 
 <!-- NAVBAR -->
 <div class="navbar d-flex justify-content-between align-items-center">
-    <b class="text-white fw-bold"><span style="color: yellow;">CSC CRM</span></b>
+    <b class="text-white fw-bold">
+        <span style="color: yellow;">CSC CRM</span>
+    </b>
     <div>
         <a href="/">Student Registration</a>
         <a href="#">Student List</a>
@@ -168,7 +175,20 @@ input:focus, select:focus, textarea:focus {
 <!-- SEARCH -->
 <form method="GET" class="mt-4">
     <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
+    
 </form>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div></div> 
+
+    <a href="{% url 'export_excel' %}?q={{ query }}&filter={{ filter_type }}"
+       class="btn btn-success export-btn">
+       ⬇ Export Excel
+    </a>
+
+</div>
+
 
 <!-- FILTER -->
 <div class="mt-2">
@@ -189,7 +209,7 @@ input:focus, select:focus, textarea:focus {
 
     <div class="col-md-4">
         <div class="top-card red">
-            <h6>Outstanding Balance</h6>
+            <h6>Outstanding</h6>
             <h4>₹{{ total_pending }}</h4>
         </div>
     </div>
@@ -246,7 +266,7 @@ input:focus, select:focus, textarea:focus {
 
 <!-- PAYMENT HISTORY -->
 <div class="card-box">
-<h5>Payment History</h5>
+<h5>📜 Payment History</h5>
 
 <table class="table text-center">
 <thead>
@@ -262,15 +282,21 @@ input:focus, select:focus, textarea:focus {
 <tbody>
 {% for p in payments %}
 <tr>
+
 <td>
+<a href="{% url 'student_detail' p.student.id %}" class="student-link">
 {{ p.student.first_name }} {{ p.student.last_name }}
+</a>
 </td>
+
 <td>{{ p.payment_date }}</td>
 <td>₹{{ p.amount }}</td>
 <td>{{ p.payment_mode }}</td>
+
 <td>
 <a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">View</a>
 </td>
+
 </tr>
 {% endfor %}
 </tbody>
@@ -279,7 +305,7 @@ input:focus, select:focus, textarea:focus {
 
 <!-- STATUS -->
 <div class="card-box">
-<h5>Student Fee Status</h5>
+<h5>📊 Student Fee Status</h5>
 
 <table class="table text-center">
 <thead>
@@ -295,7 +321,9 @@ input:focus, select:focus, textarea:focus {
 <tbody>
 {% for s in students %}
 <tr>
+
 <td>{{ s.first_name }} {{ s.last_name }}</td>
+
 <td>₹{{ s.total_fee }}</td>
 <td>₹{{ s.total_paid }}</td>
 
