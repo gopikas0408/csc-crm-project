@@ -1,103 +1,356 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Admission</title>
+<title>CSC CRM Admission</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-        body {
-            background: linear-gradient(135deg, #eef2f7, #eef2f7);
-            min-height: 100vh;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        .box {
-            max-width: 420px;
-            margin: auto;
-            margin-top: 60px;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-        }
+<style>
 
-        label {
-            font-weight: 500;
-            margin-top: 10px;
-        }
+/* BODY */
+body {
+    background: #f4f7fb;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-    </style>
+/* NAVBAR */
+.navbar {
+    background: linear-gradient(90deg, #1e2a44, #2b3e66);
+    padding: 12px 20px;
+    flex-wrap: wrap;
+}
+
+.navbar a {
+    color: #e4ecf7;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #ffd400;
+}
+
+/* SECTION */
+.section {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    margin-top: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    border-left: 5px solid #ffd400;
+}
+
+/* TITLE */
+.section h5 {
+    font-weight: 600;
+    color: #1e2a44;
+    margin-bottom: 20px;
+}
+
+/* INPUT */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #d6dce7;
+    transition: 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #2b6cb0;
+    box-shadow: 0 0 0 2px rgba(43,108,176,0.1);
+    outline: none;
+}
+
+/* BUTTON */
+.btn-primary {
+    background: #2b6cb0;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #1e2a44;
+    transform: translateY(-2px);
+}
+
+/* STATUS BUTTON */
+.status-btn {
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin-right: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+/* HOVER EFFECT 🔥 */
+.status-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* CLICK ACTIVE */
+.status-btn.active {
+    opacity: 1;
+    font-weight: bold;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #ffd400;
+}
+
+/* COLORS */
+.enquiry { background:#ffe8a3; }
+.confirmed { background:#cfe2ff; }
+.enrolled { background:#c8f7dc; }
+.dropped { background:#f8d7da; }
+
+/* FILE */
+input[type="file"] {
+    border: 1px dashed #ccc;
+    padding: 12px;
+    background: #fafafa;
+}
+
+/* RESPONSIVE 🔥 */
+@media (max-width: 768px) {
+
+    .navbar {
+        text-align: center;
+    }
+
+    .navbar div {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .navbar a {
+        display: inline-block;
+        margin: 5px 10px;
+    }
+
+    .section {
+        padding: 18px;
+    }
+
+    h5 {
+        font-size: 16px;
+    }
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="container">
-    <div class="box shadow">
+<!-- NAVBAR -->
+<div class="navbar d-flex justify-content-between align-items-center">
+    
+    <b class="text-white fw-bold"><span style="color: yellow;">CSC CRM</span></b>
 
-        <h3 class="text-center mb-3">🎓 Student Admission</h3>
-
-        <!-- ✅ SUCCESS / INFO MESSAGE -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-info text-center">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- ✅ CLEAN FORM ERRORS -->
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <div>⚠ {{ field.label }}: {{ error }}</div>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <!-- NAME -->
-            <label>Full Name</label>
-            {{ form.name }}
-
-            <!-- EMAIL -->
-            <label>Email</label>
-            {{ form.email }}
-
-            <!-- PHONE -->
-            <label>Phone</label>
-            {{ form.phone }}
-
-            <!-- COURSE -->
-            <label>Course</label>
-            {{ form.course }}
-
-            <!-- GENDER -->
-            <label>Gender</label>
-            <div>
-                {{ form.gender }}
-            </div>
-
-            <!-- SUBMIT -->
-            <button type="submit" class="btn btn-primary w-100 mt-3">
-                Submit
-            </button>
-
-        </form>
-
+    <div>
+        <a href="/">Student Registration</a>
+        <a href="#">Student List</a>
+        <a href="/fee/">Fee Management</a>
+        <a href="#">Search</a>
     </div>
 </div>
+
+<div class="container">
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- PERSONAL -->
+<div class="section">
+<h5>👤 Personal Information</h5>
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<label>First Name</label>
+{{ form.first_name }}
+</div>
+
+<div class="col-md-6">
+<label>Last Name</label>
+{{ form.last_name }}
+</div>
+
+<div class="col-md-6">
+<label>Email</label>
+{{ form.email }}
+</div>
+
+<div class="col-md-6">
+<label>Phone</label>
+{{ form.phone }}
+</div>
+
+<div class="col-md-6">
+<label>Date of Birth</label>
+{{ form.dob }}
+</div>
+
+<div class="col-md-6">
+<label>Gender</label>
+{{ form.gender }}
+</div>
+
+<div class="col-md-6">
+<label>Guardian Name</label>
+{{ form.guardian_name }}
+</div>
+
+<div class="col-md-6">
+<label>Guardian Phone</label>
+{{ form.guardian_phone }}
+</div>
+
+<div class="col-md-12">
+<label>Address</label>
+{{ form.address }}
+</div>
+
+</div>
+</div>
+
+<!-- COURSE -->
+<div class="section">
+<h5>📘 Course Enrollment</h5>
+
+<div class="row g-3">
+
+<div class="col-md-4">
+<label>Course</label>
+{{ form.course }}
+</div>
+
+<div class="col-md-4">
+<label>Batch</label>
+{{ form.batch }}
+</div>
+
+<div class="col-md-4">
+<label>Duration</label>
+<select class="form-control">
+<option>3 Months</option>
+<option>6 Months</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<label>Start Date</label>
+<input type="date" class="form-control">
+</div>
+
+<div class="col-md-4">
+<label>Course Fee</label>
+{{ form.total_fee }}
+</div>
+
+<div class="col-md-8">
+<label>Admission Status</label><br>
+
+<button type="button" class="status-btn enquiry" data-value="Enquiry">Enquiry</button>
+<button type="button" class="status-btn confirmed" data-value="Confirmed">Confirmed</button>
+<button type="button" class="status-btn enrolled" data-value="Enrolled">Enrolled</button>
+<button type="button" class="status-btn dropped" data-value="Dropped">Dropped</button>
+
+<input type="hidden" name="admission_status" id="statusInput">
+
+</div>
+
+</div>
+</div>
+
+<!-- DOCUMENT -->
+<div class="section">
+<h5>📄 Document Upload</h5>
+
+<div class="row text-center g-3">
+
+<div class="col-md-4">
+<p>📷 Student Photo</p>
+<input type="file" name="photo">
+</div>
+
+<div class="col-md-4">
+<p>🪪 ID Proof</p>
+<input type="file" name="id_proof">
+</div>
+
+<div class="col-md-4">
+<p>📄 Certificates</p>
+<input type="file" name="certificate">
+</div>
+
+</div>
+</div>
+
+<!-- BUTTON -->
+<div class="text-end mt-4 mb-5">
+
+<button type="reset" class="btn btn-light me-2">
+Clear Form
+</button>
+
+<button class="btn btn-primary">
+✔ Save & Generate ID
+</button>
+
+</div>
+
+</form>
+</div>
+
+<!-- JS -->
+<script>
+
+// DEFAULT SELECT
+window.onload = () => {
+    document.querySelector('.status-btn').click();
+};
+
+// STATUS CLICK
+const buttons = document.querySelectorAll('.status-btn');
+const input = document.getElementById('statusInput');
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', function () {
+        buttons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        input.value = this.dataset.value;
+    });
+});
+
+// AUTO FEE
+const courseField = document.querySelector('[name="course"]');
+const feeField = document.querySelector('[name="total_fee"]');
+
+const feeMap = {
+    "Python Developer": 20000,
+    "Java Developer": 22000,
+    "Web Development": 18000,
+    "Data Analyst": 25000,
+    "Data Scientist": 30000,
+    "AI & ML": 35000
+};
+
+courseField.addEventListener('change', function () {
+    feeField.value = feeMap[this.value] || 0;
+});
+
+</script>
 
 </body>
 </html>

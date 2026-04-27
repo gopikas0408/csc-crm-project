@@ -4,8 +4,6 @@ from django.db.models import Sum
 
 # ------------------ STUDENT MODEL ------------------
 
-
-
 class Student(models.Model):
 
     COURSE_CHOICES = [
@@ -22,20 +20,52 @@ class Student(models.Model):
         ('Female', 'Female'),
     ]
 
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
+    BATCH_CHOICES = [
+        ('Batch A - Morning', 'Batch A - Morning'),
+        ('Batch B - Evening', 'Batch B - Evening'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Enquiry', 'Enquiry'),
+        ('Confirmed', 'Confirmed'),
+        ('Enrolled', 'Enrolled'),
+        ('Dropped', 'Dropped'),
+    ]
+
+    #  NAME SPLIT
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+
+    #  BASIC
+    email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=15)
-    course = models.CharField(max_length=100, choices=COURSE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
 
+    #  EXTRA
+    dob = models.DateField(null=True, blank=True)
+    address = models.TextField(blank=True, null=True)
+
+    guardian_name = models.CharField(max_length=100, blank=True, null=True)
+    guardian_phone = models.CharField(max_length=15, blank=True, null=True)
+
+    #  COURSE
+    course = models.CharField(max_length=100, choices=COURSE_CHOICES)
+    batch = models.CharField(max_length=100, choices=BATCH_CHOICES, null=True, blank=True)
+
     total_fee = models.IntegerField(default=20000)
+
+    admission_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='Enquiry'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.first_name} {self.last_name}"
 
-    # AUTO SET COURSE BASED FEE
+    #  AUTO FEE
     def save(self, *args, **kwargs):
 
         if self.course == "Python Developer":
@@ -62,12 +92,13 @@ class Student(models.Model):
     def total_paid(self):
         return self.payments.aggregate(total=Sum('amount'))['total'] or 0
 
-    #  BALANCE (NO NEGATIVE)
+    #  BALANCE
     def balance(self):
         return max(self.total_fee - self.total_paid(), 0)
 
 
 # ------------------ FEE PAYMENT MODEL ------------------
+
 class FeePayment(models.Model):
 
     PAYMENT_CHOICES = [
@@ -90,7 +121,6 @@ class FeePayment(models.Model):
         choices=PAYMENT_CHOICES
     )
 
-    #  Manual date selection (UI will work properly)
     payment_date = models.DateField()
 
     reference_id = models.CharField(max_length=100, blank=True, null=True)
@@ -99,4 +129,4 @@ class FeePayment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.student.name} - ₹{self.amount}"
+        return f"{self.student.first_name} {self.student.last_name} - ₹{self.amount}"
