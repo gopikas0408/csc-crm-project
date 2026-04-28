@@ -33,8 +33,8 @@ class StudentForm(forms.ModelForm):
     )
 
     gender = forms.ChoiceField(
-        choices=GENDER_CHOICES,
-        widget=forms.RadioSelect
+        choices=[('', 'Select Gender')] + GENDER_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     admission_status = forms.ChoiceField(
