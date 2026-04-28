@@ -10,142 +10,160 @@
 
 <style>
 
+:root {
+--primary: #262170;
+--secondary: #FEF200;
+--white: #ffffff;
+--light: #f8f9fc;
+--border: #e4e7ec;
+--text: #1f2937;
+--muted: #6b7280;
+--success: #16a34a;
+--danger: #dc2626;
+--shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
 /* BODY */
 body {
-    background: #f4f7fb;
-    font-family: 'Segoe UI', sans-serif;
+background: var(--light);
+font-family: 'Segoe UI', sans-serif;
+color: var(--text);
 }
 
 /* NAVBAR */
 .navbar {
-    background: linear-gradient(90deg, #1e2a44, #2b3e66);
-    padding: 12px 20px;
-    flex-wrap: wrap;
+background: linear-gradient(90deg, var(--primary), #3a3490);
+padding: 12px 20px;
+flex-wrap: wrap;
 }
 
 .navbar a {
-    color: #e4ecf7;
-    margin-left: 20px;
-    text-decoration: none;
-    font-weight: 500;
+color: var(--white);
+margin-left: 20px;
+text-decoration: none;
+font-weight: 500;
 }
 
 .navbar a:hover {
-    color: #ffd400;
+color: var(--secondary);
 }
 
 /* SECTION */
 .section {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 16px;
-    margin-top: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    border-left: 5px solid #ffd400;
+background: var(--white);
+padding: 25px;
+border-radius: 16px;
+margin-top: 20px;
+box-shadow: var(--shadow);
+border-left: 5px solid var(--secondary);
 }
 
 /* TITLE */
 .section h5 {
-    font-weight: 600;
-    color: #1e2a44;
-    margin-bottom: 20px;
+font-weight: 600;
+color: var(--primary);
+margin-bottom: 20px;
 }
 
 /* INPUT */
 input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #d6dce7;
-    transition: 0.3s;
+width: 100%;
+padding: 10px;
+border-radius: 10px;
+border: 1px solid var(--border);
+transition: 0.3s;
 }
 
 input:focus, select:focus, textarea:focus {
-    border-color: #2b6cb0;
-    box-shadow: 0 0 0 2px rgba(43,108,176,0.1);
-    outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 2px rgba(38,33,112,0.1);
+outline: none;
 }
 
 /* BUTTON */
 .btn-primary {
-    background: #2b6cb0;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    transition: 0.3s;
+background: var(--primary);
+border: none;
+border-radius: 10px;
+padding: 10px 20px;
+transition: 0.3s;
+color: var(--white);
 }
 
 .btn-primary:hover {
-    background: #1e2a44;
-    transform: translateY(-2px);
+background: #1b174f;
+transform: translateY(-2px);
 }
 
 /* STATUS BUTTON */
 .status-btn {
-    border: none;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    margin-right: 8px;
-    margin-top: 5px;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: all 0.3s ease;
+border: none;
+padding: 6px 14px;
+border-radius: 20px;
+font-size: 13px;
+margin-right: 8px;
+margin-top: 5px;
+cursor: pointer;
+opacity: 0.6;
+transition: all 0.3s ease;
 }
 
-/* HOVER EFFECT  */
+/* HOVER EFFECT */
 .status-btn:hover {
-    opacity: 1;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+opacity: 1;
+transform: scale(1.05);
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* CLICK ACTIVE */
+/* ACTIVE */
 .status-btn.active {
-    opacity: 1;
-    font-weight: bold;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px #ffd400;
+opacity: 1;
+font-weight: bold;
+transform: scale(1.1);
+box-shadow: 0 0 0 2px var(--secondary);
 }
 
 /* COLORS */
-.enquiry { background:#ffe8a3; }
-.confirmed { background:#cfe2ff; }
-.enrolled { background:#c8f7dc; }
-.dropped { background:#f8d7da; }
+.enquiry { background: #fff3bf; }
+.confirmed { background: #dbeafe; }
+.enrolled { background: #dcfce7; }
+.dropped { background: #fee2e2; }
 
 /* FILE */
 input[type="file"] {
-    border: 1px dashed #ccc;
-    padding: 12px;
-    background: #fafafa;
+border: 1px dashed var(--border);
+padding: 12px;
+background: var(--light);
 }
 
-/* RESPONSIVE  */
+/* RESPONSIVE */
 @media (max-width: 768px) {
 
-    .navbar {
-        text-align: center;
-    }
 
-    .navbar div {
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .navbar a {
-        display: inline-block;
-        margin: 5px 10px;
-    }
-
-    .section {
-        padding: 18px;
-    }
-
-    h5 {
-        font-size: 16px;
-    }
+.navbar {
+    text-align: center;
 }
+
+.navbar div {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.navbar a {
+    display: inline-block;
+    margin: 5px 10px;
+}
+
+.section {
+    padding: 18px;
+}
+
+h5 {
+    font-size: 16px;
+}
+
+}
+
 
 </style>
 </head>
