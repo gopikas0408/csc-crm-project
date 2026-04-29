@@ -135,34 +135,48 @@ border: 1px dashed var(--border);
 padding: 12px;
 background: var(--light);
 }
+/* MENU BUTTON */
+.menu-toggle {
+display: none; 
+font-size: 24px;
+background: none;
+border: none;
+color: var(--white);
+cursor: pointer;
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
 
 
-.navbar {
-    text-align: center;
+.menu-toggle {
+    display: block;
 }
 
-.navbar div {
+#navLinks {
+    display: none;
+    flex-direction: column;
     width: 100%;
+    background: var(--primary);
+    border-radius: 10px;
     margin-top: 10px;
+    overflow: hidden;
 }
 
-.navbar a {
-    display: inline-block;
-    margin: 5px 10px;
+#navLinks.show {
+    display: flex;
+}
+#navLinks a {
+    display: block;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    margin: 0;
+    
 }
 
-.section {
-    padding: 18px;
 }
 
-h5 {
-    font-size: 16px;
-}
 
-}
 
 
 </style>
@@ -174,8 +188,12 @@ h5 {
 <div class="navbar d-flex justify-content-between align-items-center">
     
     <b class="text-white fw-bold"><span style="color: yellow;">CSC CRM</span></b>
+    <!--MENU-->
+     <button class="menu-toggle d-md-none" onclick="toggleMenu()">☰</button>
+     
 
-    <div>
+
+    <div id="navLinks" class="d-md-flex">
         <a href="/">Student Registration</a>
         <a href="#">Student List</a>
         <a href="/fee/">Fee Management</a>
@@ -207,11 +225,17 @@ h5 {
 <div class="col-md-6">
 <label>Email</label>
 {{ form.email }}
+<span class="text-danger" style="font-size: 13px;">
+    {{ form.email.errors }}
+</span>
 </div>
 
 <div class="col-md-6">
 <label>Phone</label>
 {{ form.phone }}
+<span class="text-danger" style="font-size: 13px;">
+    {{ form.phone.errors }}
+</span>
 </div>
 
 <div class="col-md-6">
@@ -368,6 +392,10 @@ courseField.addEventListener('change', function () {
     feeField.value = feeMap[this.value] || 0;
 });
 
+function toggleMenu() {
+    var navLinks = document.getElementById('navLinks');
+    navLinks.classList.toggle('show');
+}
 </script>
 
 </body>

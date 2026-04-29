@@ -77,7 +77,24 @@ class StudentForm(forms.ModelForm):
                 'readonly': 'readonly'   #  auto fee 
             }),
         }
-
+        
+        #--------VALIDATIONS--------
+        
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Student.objects.filter(email=email).exists():
+            raise forms.ValidationError("A student with this email already exists.")
+        return email
+    
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if not phone:
+            raise forms.ValidationError("Phone number is required.")
+        if not phone.isdigit():
+            raise forms.ValidationError("Phone number must contain only digits.")
+        if len(phone) < 10:
+            raise forms.ValidationError("Phone number must be at least 10 digits long.")
+        return phone
 
 # -------- Fee Payment Form --------
 
@@ -130,3 +147,13 @@ class FeePaymentForm(forms.ModelForm):
             'student': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+        
+        #--------VALIDATIONS--------
+        
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount is None:
+            raise forms.ValidationError("Amount is required.")
+        if amount <= 0:
+            raise forms.ValidationError("Amount must be greater than 0")
+        return amount

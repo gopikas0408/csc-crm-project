@@ -133,30 +133,6 @@ color: var(--secondary);
 text-decoration: underline;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-
-
-.navbar {
-    flex-direction: column;
-    text-align: center;
-}
-
-.navbar div {
-    margin-top: 10px;
-}
-
-.navbar a {
-    display: inline-block;
-    margin: 5px;
-}
-
-.top-card {
-    margin-bottom: 15px;
-}
-
-
-}
 
 /* EXCEL BUTTON */
 .export-btn {
@@ -172,7 +148,44 @@ transition: 0.3s;
 background: #15803d;
 transform: translateY(-2px);
 }
+/* DEFAULT (DESKTOP) */
+#navLinks {
+    display: flex;
+    gap: 15px;
+}
 
+/* MOBILE */
+@media (max-width: 768px) {
+
+.menu-toggle {
+    display: block;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white; /* FIXED */
+    margin-top: 10px;
+}
+
+#navLinks {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+#navLinks.show {
+    display: flex;
+}
+
+#navLinks a {
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+}
 </style>
 </head>
 
@@ -183,7 +196,12 @@ transform: translateY(-2px);
     <b class="text-white fw-bold">
         <span style="color: yellow;">CSC CRM</span>
     </b>
-    <div>
+    <!--MENU BUTTON-->
+    <button class="menu-toggle d-md-none" onclick="toggleMenu()">☰</button>
+    
+
+    <!-- NAV LINKS -->
+    <div id="navLinks" class="d-md-flex">
         <a href="/">Student Registration</a>
         <a href="#">Student List</a>
         <a href="/fee/">Fee Management</a>
@@ -368,6 +386,14 @@ transform: translateY(-2px);
 </div>
 
 </div>
+
+
+<script>
+function toggleMenu() {
+    var navLinks = document.getElementById('navLinks');
+    navLinks.classList.toggle('show');
+}
+</script>
 
 </body>
 </html>
