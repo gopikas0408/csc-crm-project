@@ -1,16 +1,18 @@
+import os
+import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# 🔐 SECURITY
+#  SECURITY
 SECRET_KEY = 'django-insecure-g6@wi6^1w=giq28qz#eld@mf@uvfruxxkg%#f5_e6)@m)2!tpz'
 
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
-# 📦 APPS
+#  APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,9 +27,11 @@ INSTALLED_APPS = [
 ]
 
 
-# ⚙️ MIDDLEWARE
+#  MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -37,11 +41,11 @@ MIDDLEWARE = [
 ]
 
 
-# 🔗 URL CONFIG
+#  URL CONFIG
 ROOT_URLCONF = 'csc_crm.urls'
 
 
-# 🎨 TEMPLATES
+#  TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -58,24 +62,30 @@ TEMPLATES = [
 ]
 
 
-# 🚀 WSGI
+#  WSGI
 WSGI_APPLICATION = 'csc_crm.wsgi.application'
 
 
-# 🗄️ DATABASE (MySQL)
+#  DATABASE (MySQL)
+#DATABASES = {
+  #  'default': {
+   #     'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'csc_crm_db',
+     #   'USER': 'root',
+      #  'PASSWORD': 'Gopika@0808',
+       # 'HOST': 'localhost',
+        #'PORT': '3306',
+   # }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'csc_crm_db',
-        'USER': 'root',
-        'PASSWORD': 'Gopika@0808',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-
-# 🔐 PASSWORD VALIDATION
+#  PASSWORD VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -84,23 +94,23 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# 🌍 LANGUAGE & TIME
+#  LANGUAGE & TIME
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
 
-# 📁 STATIC
+#  STATIC
 STATIC_URL = 'static/'
 
 
-# 🔑 DEFAULT PK
+#  DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # =========================================================
-# 📧 EMAIL CONFIG (FINAL WORKING)
+#  EMAIL CONFIG (FINAL WORKING)
 # =========================================================
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -111,5 +121,5 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'gopikas04082005@gmail.com'
 
-# 🔥 IMPORTANT: Replace with your Gmail App Password
+#  IMPORTANT: Replace with your Gmail App Password
 EMAIL_HOST_PASSWORD = 'ixqmfouunkhegpbq'
