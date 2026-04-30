@@ -1,5 +1,4 @@
 import os
-import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 #  SECURITY
 SECRET_KEY = 'django-insecure-g6@wi6^1w=giq28qz#eld@mf@uvfruxxkg%#f5_e6)@m)2!tpz'
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
@@ -30,6 +29,7 @@ INSTALLED_APPS = [
 #  MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    #static files
     'whitenoise.middleware.WhiteNoiseMiddleware',
     
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -43,6 +43,7 @@ MIDDLEWARE = [
 
 #  URL CONFIG
 ROOT_URLCONF = 'csc_crm.urls'
+WSGI_APPLICATION = 'csc_crm.wsgi.application'
 
 
 #  TEMPLATES
@@ -62,8 +63,7 @@ TEMPLATES = [
 ]
 
 
-#  WSGI
-WSGI_APPLICATION = 'csc_crm.wsgi.application'
+
 
 
 #  DATABASE (MySQL)
@@ -103,6 +103,9 @@ USE_TZ = True
 
 #  STATIC
 STATIC_URL = 'static/'
+STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles') 
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 #  DEFAULT PK
