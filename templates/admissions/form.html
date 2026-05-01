@@ -184,6 +184,8 @@ cursor: pointer;
 
 <body>
 
+   
+
 <!-- NAVBAR -->
 <div class="navbar d-flex justify-content-between align-items-center">
     
@@ -206,6 +208,13 @@ cursor: pointer;
 <form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 
+<!-- GLOBAL ERROR -->
+{% if form.errors %}
+<div class="alert alert-danger mt-3">
+    Please correct the errors below.
+</div>
+{% endif %}
+
 <!-- PERSONAL -->
 <div class="section">
 <h5>👤 Personal Information</h5>
@@ -215,11 +224,13 @@ cursor: pointer;
 <div class="col-md-6">
 <label>First Name</label>
 {{ form.first_name }}
+<span class="text-danger">{{ form.first_name.errors }}</span>
 </div>
 
 <div class="col-md-6">
 <label>Last Name</label>
 {{ form.last_name }}
+<span class="text-danger">{{ form.last_name.errors }}</span>
 </div>
 
 <div class="col-md-6">
@@ -233,34 +244,37 @@ cursor: pointer;
 <div class="col-md-6">
 <label>Phone</label>
 {{ form.phone }}
-<span class="text-danger" style="font-size: 13px;">
-    {{ form.phone.errors }}
-</span>
+<span class="text-danger">{{ form.phone.errors }}</span>
 </div>
 
 <div class="col-md-6">
 <label>Date of Birth</label>
 {{ form.dob }}
+<span class="text-danger">{{ form.dob.errors }}</span>
 </div>
 
 <div class="col-md-6">
 <label>Gender</label>
 {{ form.gender }}
+<span class="text-danger">{{ form.gender.errors }}</span>
 </div>
 
 <div class="col-md-6">
 <label>Guardian Name</label>
 {{ form.guardian_name }}
+<span class="text-danger">{{ form.guardian_name.errors }}</span>
 </div>
 
 <div class="col-md-6">
 <label>Guardian Phone</label>
 {{ form.guardian_phone }}
+<span class="text-danger">{{ form.guardian_phone.errors }}</span>
 </div>
 
 <div class="col-md-12">
 <label>Address</label>
 {{ form.address }}
+<span class="text-danger">{{ form.address.errors }}</span>
 </div>
 
 </div>
@@ -275,11 +289,13 @@ cursor: pointer;
 <div class="col-md-4">
 <label>Course</label>
 {{ form.course }}
+<span class="text-danger">{{ form.course.errors }}</span>
 </div>
 
 <div class="col-md-4">
 <label>Batch</label>
 {{ form.batch }}
+<span class="text-danger">{{ form.batch.errors }}</span>
 </div>
 
 <div class="col-md-4">
@@ -298,6 +314,7 @@ cursor: pointer;
 <div class="col-md-4">
 <label>Course Fee</label>
 {{ form.total_fee }}
+<span class="text-danger">{{ form.total_fee.errors }}</span>
 </div>
 
 <div class="col-md-8">
@@ -355,27 +372,103 @@ Clear Form
 </form>
 </div>
 
-<!-- JS -->
 <script>
 
-// DEFAULT SELECT
-window.onload = () => {
-    document.querySelector('.status-btn').click();
-};
+// ================= FORM VALIDATION =================
 
-// STATUS CLICK
+const form = document.querySelector("form");
+
+if (form) {
+    form.addEventListener("submit", function(e) {
+
+        let isValid = true;
+
+        function showError(input, message) {
+            input.style.border = "1px solid red";
+
+            let parent = input.parentNode;
+
+            let error = parent.querySelector(".js-error");
+            if (!error) {
+                error = document.createElement("div");
+                error.className = "js-error text-danger";
+                error.style.fontSize = "13px";
+                error.style.marginTop = "3px";
+                parent.appendChild(error);
+            }
+
+            error.innerText = message;
+        }
+
+        function clearError(input) {
+            input.style.border = "1px solid #e4e7ec";
+
+            let parent = input.parentNode;
+            let error = parent.querySelector(".js-error");
+
+            if (error) error.remove();
+        }
+
+        // REQUIRED FIELDS
+        const requiredFields = [
+            "first_name",
+            "last_name",
+            "phone",
+            "course"
+        ];
+
+        requiredFields.forEach(name => {
+            const input = document.querySelector(`[name="${name}"]`);
+
+            if (input) {
+                if (input.value.trim() === "") {
+                    showError(input, "This field is required");
+                    isValid = false;
+                } else {
+                    clearError(input);
+                }
+            }
+        });
+
+        // PHONE VALIDATION
+        const phone = document.querySelector('[name="phone"]');
+
+        if (phone && phone.value) {
+            if (!/^\d{10}$/.test(phone.value)) {
+                showError(phone, "Enter valid 10 digit number");
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}
+
+
+// ================= STATUS BUTTON =================
+
 const buttons = document.querySelectorAll('.status-btn');
-const input = document.getElementById('statusInput');
+const statusInput = document.getElementById('statusInput');
 
 buttons.forEach(btn => {
     btn.addEventListener('click', function () {
         buttons.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        input.value = this.dataset.value;
+        statusInput.value = this.dataset.value;
     });
 });
 
-// AUTO FEE
+// AUTO SELECT FIRST STATUS
+window.addEventListener("load", () => {
+    const btn = document.querySelector('.status-btn');
+    if (btn) btn.click();
+});
+
+
+// ================= AUTO FEE =================
+
 const courseField = document.querySelector('[name="course"]');
 const feeField = document.querySelector('[name="total_fee"]');
 
@@ -388,15 +481,20 @@ const feeMap = {
     "AI & ML": 35000
 };
 
-courseField.addEventListener('change', function () {
-    feeField.value = feeMap[this.value] || 0;
-});
+if (courseField && feeField) {
+    courseField.addEventListener('change', function () {
+        feeField.value = feeMap[this.value] || 0;
+    });
+}
+
+
+// ================= MENU =================
 
 function toggleMenu() {
-    var navLinks = document.getElementById('navLinks');
+    const navLinks = document.getElementById('navLinks');
     navLinks.classList.toggle('show');
 }
-</script>
 
+</script>
 </body>
 </html>

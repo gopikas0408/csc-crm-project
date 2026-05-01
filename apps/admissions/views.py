@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
 from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 from django.db.models import Sum, Q
 
 from .models import Student, FeePayment
@@ -14,7 +15,7 @@ from io import BytesIO
 
 # ===================== ADMISSION =====================
 def admission_form(request):
-    form = StudentForm(request.POST or None, request.FILES or None)
+    form = StudentForm(request.POST or None)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -28,19 +29,20 @@ def admission_form(request):
             if student.email:
                 try:
                     send_mail(
-                        subject='🎓 CSC Admission Successful',
+                        subject='CSC Admission Successful',
                         message=f"""
 Hi {full_name},
 
-✅ Your admission has been successfully completed!
+Your admission has been successfully completed!
 
-📚 Course: {student.course}
-📞 Phone: {student.phone}
+Course: {student.course}
+Phone: {student.phone}
 
 Welcome to CSC 🚀
 """,
-                        from_email='gopikas04082005@gmail.com',
+                        from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[student.email],
+                        fail_silently=True
                     )
                 except Exception as e:
                     print("Student Email Error:", e)
@@ -48,7 +50,7 @@ Welcome to CSC 🚀
             # -------- ADMIN EMAIL --------
             try:
                 send_mail(
-                    subject='🚨 New Admission',
+                    subject='New Admission',
                     message=f"""
 New Admission:
 
@@ -57,8 +59,9 @@ Email: {student.email}
 Phone: {student.phone}
 Course: {student.course}
 """,
-                    from_email='gopikas04082005@gmail.com',
-                    recipient_list=['gopikas04082005@gmail.com'],
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[settings.EMAIL_HOST_USER],
+                    fail_silently=True
                 )
             except Exception as e:
                 print("Admin Email Error:", e)
@@ -76,24 +79,16 @@ def fee_management(request):
 
     payments = FeePayment.objects.select_related('student').all().order_by('-id')
 
-    # -------- SEARCH --------
     if query:
         payments = payments.filter(
             Q(student__first_name__icontains=query) |
             Q(student__last_name__icontains=query)
         )
 
-    # -------- TOTAL --------
     total_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
 
     students = Student.objects.all()
 
-    #  REMOVE WRONG CODE (VERY IMPORTANT)
-    # DO NOT DO:
-    # s.total_paid = s.total_paid()
-    # s.balance = s.balance()
-
-    # -------- FILTER --------
     if filter_type == "pending":
         students = [s for s in students if s.balance() > 0]
 
@@ -131,24 +126,23 @@ def fee_management(request):
             if payment.student.email:
                 try:
                     email = EmailMessage(
-                        subject="💰 CSC Fee Receipt",
+                        subject="CSC Fee Receipt",
                         body=f"""
 Hi {full_name},
 
-  Payment of ₹{payment.amount} successful.
+Payment of ₹{payment.amount} successful.
 
 Thank you!
 """,
-                        from_email='gopikas04082005@gmail.com',
+                        from_email=settings.EMAIL_HOST_USER,
                         to=[payment.student.email],
                     )
                     email.attach('receipt.pdf', buffer.read(), 'application/pdf')
-                    email.send()
+                    email.send(fail_silently=True)
 
                 except Exception as e:
                     print("Payment Email Error:", e)
 
-            # -------- ACTION --------
             if action == 'pdf':
                 return redirect('pdf', payment.id)
 
@@ -190,7 +184,6 @@ def generate_pdf(request, id):
 # ===================== EXCEL =====================
 def export_excel(request):
     query = request.GET.get('q')
-    filter_type = request.GET.get('filter')
 
     payments = FeePayment.objects.select_related('student').all()
 

@@ -9,7 +9,6 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-
 :root {
 --primary: #262170;
 --secondary: #FEF200;
@@ -23,14 +22,12 @@
 --shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-/* BODY */
 body {
 background: var(--light);
 font-family: 'Segoe UI', sans-serif;
 color: var(--text);
 }
 
-/* NAVBAR */
 .navbar {
 background: linear-gradient(90deg, var(--primary), #3a3490);
 padding: 12px 20px;
@@ -40,14 +37,8 @@ padding: 12px 20px;
 color: var(--white);
 margin-left: 20px;
 text-decoration: none;
-font-weight: 500;
 }
 
-.navbar a:hover {
-color: var(--secondary);
-}
-
-/* CARD */
 .card-box {
 background: var(--white);
 padding: 25px;
@@ -55,44 +46,23 @@ border-radius: 16px;
 margin-top: 30px;
 box-shadow: var(--shadow);
 border-left: 5px solid var(--secondary);
-transition: 0.3s;
 }
 
-.card-box:hover {
-transform: translateY(-3px);
-}
-
-/* TOP CARDS */
 .top-card {
 border-radius: 14px;
 padding: 18px;
 color: var(--white);
-transition: 0.3s;
-}
-
-.top-card:hover {
-transform: scale(1.05);
 }
 
 .bg-blue { background: var(--primary); }
 .bg-green { background: var(--success); }
 .bg-red { background: var(--danger); }
 
-/* TABLE */
 .table thead {
 background: var(--primary);
 color: var(--white);
 }
 
-.table tbody tr {
-transition: 0.2s;
-}
-
-.table tbody tr:hover {
-background: #eef2ff;
-}
-
-/* BADGES */
 .badge-upi {
 background: #e0d9ff;
 padding: 6px 10px;
@@ -105,61 +75,32 @@ padding: 6px 10px;
 border-radius: 8px;
 }
 
-/* BACK BUTTON */
 .back-btn {
 background: var(--muted);
-border-radius: 8px;
-color: var(--white);
+color: white;
 }
 
-.back-btn:hover {
-transform: translateY(-2px);
-}
-
-/* TITLE */
 .title {
 font-weight: 700;
 color: var(--primary);
 }
 
-/* INFO TEXT */
 .info-text {
 color: var(--muted);
-margin-bottom: 6px;
 }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-
-
-.navbar {
-    flex-direction: column;
-    text-align: center;
-}
-
-.navbar div {
-    margin-top: 10px;
-}
-
-.navbar a {
-    display: inline-block;
-    margin: 5px;
-}
-
-.top-card {
-    margin-bottom: 15px;
-}
-
-
-}
-
-
 </style>
 </head>
 
 <body>
 
-
+<!-- NAVBAR -->
+<div class="navbar d-flex justify-content-between">
+    <b class="text-white"><span style="color: yellow;">CSC CRM</span></b>
+    <div>
+        <a href="/">Register</a>
+        <a href="/fee/">Fee</a>
+    </div>
+</div>
 
 <div class="container">
 
@@ -167,7 +108,7 @@ margin-bottom: 6px;
 
 <!-- BACK -->
 <div class="mb-3">
-    <a href="/fee/" class="btn back-btn text-white">⬅ Back</a>
+    <a href="/fee/" class="btn back-btn">⬅ Back</a>
 </div>
 
 <!-- STUDENT -->
@@ -175,7 +116,7 @@ margin-bottom: 6px;
 👤 {{ student.first_name }} {{ student.last_name }}
 </h3>
 
-<p class="info-text"><strong>Email:</strong> {{ student.email }}</p>
+<p class="info-text"><strong>Email:</strong> {{ student.email|default:"Not provided" }}</p>
 <p class="info-text"><strong>Course:</strong> {{ student.course }}</p>
 <p class="info-text"><strong>Phone:</strong> {{ student.phone }}</p>
 

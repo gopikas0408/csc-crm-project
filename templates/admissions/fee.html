@@ -154,6 +154,12 @@ transform: translateY(-2px);
     gap: 15px;
 }
 
+/*JS ERROR*/
+.js-error {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
 
@@ -387,13 +393,90 @@ transform: translateY(-2px);
 
 </div>
 
-
 <script>
+
+// ================= PAYMENT FORM VALIDATION =================
+
+const form = document.querySelector("form[method='POST']");
+
+if (form) {
+    form.addEventListener("submit", function(e) {
+
+        let isValid = true;
+
+        function showError(input, message) {
+            input.style.border = "1px solid red";
+
+            let parent = input.parentNode;
+
+            let error = parent.querySelector(".js-error");
+
+            if (!error) {
+                error = document.createElement("div");
+                error.className = "js-error text-danger";
+                parent.appendChild(error);
+            }
+
+            error.innerText = message;
+        }
+
+        function clearError(input) {
+            input.style.border = "1px solid #e4e7ec";
+
+            let parent = input.parentNode;
+            let error = parent.querySelector(".js-error");
+
+            if (error) error.remove();
+        }
+
+        // -------- INPUTS --------
+        const student = document.querySelector('[name="student"]');
+        const amount = document.querySelector('[name="amount"]');
+        const date = document.querySelector('[name="payment_date"]');
+
+        // -------- STUDENT --------
+        if (!student.value) {
+            showError(student, "Please select a student");
+            isValid = false;
+        } else {
+            clearError(student);
+        }
+
+        // -------- AMOUNT --------
+        if (!amount.value.trim()) {
+            showError(amount, "Enter amount");
+            isValid = false;
+        } else if (parseFloat(amount.value) <= 0) {
+            showError(amount, "Amount must be greater than 0");
+            isValid = false;
+        } else {
+            clearError(amount);
+        }
+
+        // -------- DATE --------
+        if (!date.value) {
+            showError(date, "Select payment date");
+            isValid = false;
+        } else {
+            clearError(date);
+        }
+
+        // -------- STOP SUBMIT --------
+        if (!isValid) {
+            e.preventDefault();
+        }
+
+    });
+}
+
+
+// ================= MENU =================
+
 function toggleMenu() {
-    var navLinks = document.getElementById('navLinks');
+    const navLinks = document.getElementById('navLinks');
     navLinks.classList.toggle('show');
 }
-</script>
 
+</script>
 </body>
 </html>
