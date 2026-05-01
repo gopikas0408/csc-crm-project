@@ -140,7 +140,8 @@ EMAIL_USE_TLS = True
 
 #  fallback included to avoid crash
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER', 'gopikas04082005@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+#EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_PASSWORD = 'ixqmfouunkhegpbq'
 
 ADMIN_EMAIL = 'gopikas04082005@gmail.com'
 
