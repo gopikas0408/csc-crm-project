@@ -210,3 +210,47 @@ def student_detail(request, id):
         'total_paid': student.total_paid(),
         'balance': student.balance()
     })
+    
+    
+    # ===================== EXCEL =====================
+def export_excel(request):
+    from django.http import HttpResponse
+    import openpyxl
+    from django.db.models import Q
+    from .models import FeePayment
+
+    query = request.GET.get('q')
+
+    payments = FeePayment.objects.select_related('student').all()
+
+    if query:
+        payments = payments.filter(
+            Q(student__first_name__icontains=query) |
+            Q(student__last_name__icontains=query)
+        )
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Fee Report"
+
+    ws.append([
+        'Student Name', 'Course', 'Phone',
+        'Amount', 'Mode', 'Date', 'Balance'
+    ])
+
+    for p in payments:
+        ws.append([
+            f"{p.student.first_name} {p.student.last_name}",
+            p.student.course,
+            p.student.phone,
+            p.amount,
+            p.payment_mode,
+            str(p.payment_date),
+            p.student.balance()
+        ])
+
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="CSC_Fee_Report.xlsx"'
+
+    wb.save(response)
+    return response
