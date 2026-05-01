@@ -36,19 +36,19 @@ class StudentForm(forms.ModelForm):
         choices=[('', 'Select Gender')] + GENDER_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
+    
     phone = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'maxlength': '10',
-            'placeholder': 'Enter 10 digit number'
-        })
+    widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'maxlength': '10',
+        'placeholder': 'Enter 10 digit number'
+    })
     )
 
     admission_status = forms.ChoiceField(
         choices=STATUS_CHOICES,
         required=False,
-        widget=forms.HiddenInput()
+        widget=forms.HiddenInput()   # hidden 
     )
 
     class Meta:
@@ -65,6 +65,7 @@ class StudentForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
 
             'dob': forms.DateInput(attrs={
                 'type': 'date',
@@ -81,32 +82,28 @@ class StudentForm(forms.ModelForm):
 
             'total_fee': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'readonly': 'readonly'
+                'readonly': 'readonly'   #  auto fee 
             }),
         }
-
-    # -------- VALIDATIONS --------
-
+        
+        #--------VALIDATIONS--------
+        
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if email and Student.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists.")
+        if Student.objects.filter(email=email).exists():
+            raise forms.ValidationError("A student with this email already exists.")
         return email
-
+    
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
-
         if not phone:
             raise forms.ValidationError("Phone number is required.")
-
         if not phone.isdigit():
-            raise forms.ValidationError("Only numbers allowed.")
-
+            raise forms.ValidationError("only numbers are allowed.")
         if len(phone) != 10:
-            raise forms.ValidationError("Must be 10 digits.")
-
+            raise forms.ValidationError("Phone number must be exactly 10 digits.")
         return phone
-
+    
     def clean_guardian_phone(self):
         phone = self.cleaned_data.get('guardian_phone')
 
@@ -114,10 +111,9 @@ class StudentForm(forms.ModelForm):
             if not phone.isdigit():
                 raise forms.ValidationError("Only numbers allowed.")
             if len(phone) != 10:
-                raise forms.ValidationError("Must be 10 digits.")
+                raise forms.ValidationError("Must be exactly 10 digits.")
 
         return phone
-
 
 # -------- Fee Payment Form --------
 
@@ -170,16 +166,13 @@ class FeePaymentForm(forms.ModelForm):
             'student': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
         }
-
-    # -------- VALIDATIONS --------
-
+        
+        #--------VALIDATIONS--------
+        
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
-
         if amount is None:
             raise forms.ValidationError("Amount is required.")
-
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than 0")
-
         return amount

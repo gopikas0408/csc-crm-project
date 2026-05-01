@@ -26,7 +26,7 @@ def admission_form(request):
             messages.success(request, "🎉 Admission submitted successfully!")
 
             # -------- STUDENT EMAIL --------
-            if student.email:
+            if student.email and settings.EMAIL_HOST_USER:
                 try:
                     send_mail(
                         subject='CSC Admission Successful',
@@ -48,10 +48,11 @@ Welcome to CSC 🚀
                     print("Student Email Error:", e)
 
             # -------- ADMIN EMAIL --------
-            try:
-                send_mail(
-                    subject='🚨 New Admission',
-                    message=f"""
+            if settings.EMAIL_HOST_USER:
+                try:
+                    send_mail(
+                        subject='🚨 New Admission',
+                        message=f"""
 New Admission:
 
 Name: {full_name}
@@ -59,12 +60,12 @@ Email: {student.email}
 Phone: {student.phone}
 Course: {student.course}
 """,
-                    from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[settings.ADMIN_EMAIL],
-                    fail_silently=True
-                )
-            except Exception as e:
-                print("Admin Email Error:", e)
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.ADMIN_EMAIL],
+                        fail_silently=True
+                    )
+                except Exception as e:
+                    print("Admin Email Error:", e)
 
             return redirect('fee')
 
@@ -123,7 +124,7 @@ def fee_management(request):
             buffer.seek(0)
 
             # -------- STUDENT EMAIL --------
-            if payment.student.email:
+            if payment.student.email and settings.EMAIL_HOST_USER:
                 try:
                     email = EmailMessage(
                         subject="CSC Fee Receipt",
@@ -143,22 +144,23 @@ Thank you!
                     print("Payment Email Error:", e)
 
             # -------- ADMIN EMAIL --------
-            try:
-                send_mail(
-                    subject='💰 New Payment Received',
-                    message=f"""
+            if settings.EMAIL_HOST_USER:
+                try:
+                    send_mail(
+                        subject='💰 New Payment Received',
+                        message=f"""
 Payment Alert:
 
 Name: {full_name}
 Amount: ₹{payment.amount}
 Mode: {payment.payment_mode}
 """,
-                    from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[settings.ADMIN_EMAIL],
-                    fail_silently=True
-                )
-            except Exception as e:
-                print("Admin Payment Email Error:", e)
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.ADMIN_EMAIL],
+                        fail_silently=True
+                    )
+                except Exception as e:
+                    print("Admin Payment Email Error:", e)
 
             if action == 'pdf':
                 return redirect('pdf', payment.id)
@@ -210,9 +212,9 @@ def student_detail(request, id):
         'total_paid': student.total_paid(),
         'balance': student.balance()
     })
-    
-    
-    # ===================== EXCEL =====================
+
+
+# ===================== EXCEL =====================
 def export_excel(request):
     from django.http import HttpResponse
     import openpyxl
