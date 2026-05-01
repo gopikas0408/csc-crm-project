@@ -146,6 +146,7 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = ('gopikas04082005@gmail.com')
 EMAIL_HOST_PASSWORD = os.environ.get('ixqmfouunkhegpbq')
+ADMIN_EMAIL = 'gopikas04082005@gmail.com'
 
 
 # =========================================================

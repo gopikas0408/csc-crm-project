@@ -50,7 +50,7 @@ Welcome to CSC 🚀
             # -------- ADMIN EMAIL --------
             try:
                 send_mail(
-                    subject='New Admission',
+                    subject='🚨 New Admission',
                     message=f"""
 New Admission:
 
@@ -60,7 +60,7 @@ Phone: {student.phone}
 Course: {student.course}
 """,
                     from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[settings.EMAIL_HOST_USER],
+                    recipient_list=[settings.ADMIN_EMAIL],
                     fail_silently=True
                 )
             except Exception as e:
@@ -109,7 +109,7 @@ def fee_management(request):
 
             full_name = f"{payment.student.first_name} {payment.student.last_name}"
 
-            # -------- PDF BUFFER --------
+            # -------- PDF --------
             buffer = BytesIO()
             p = canvas.Canvas(buffer)
 
@@ -122,7 +122,7 @@ def fee_management(request):
             p.save()
             buffer.seek(0)
 
-            # -------- EMAIL WITH PDF --------
+            # -------- STUDENT EMAIL --------
             if payment.student.email:
                 try:
                     email = EmailMessage(
@@ -139,9 +139,26 @@ Thank you!
                     )
                     email.attach('receipt.pdf', buffer.read(), 'application/pdf')
                     email.send(fail_silently=True)
-
                 except Exception as e:
                     print("Payment Email Error:", e)
+
+            # -------- ADMIN EMAIL --------
+            try:
+                send_mail(
+                    subject='💰 New Payment Received',
+                    message=f"""
+Payment Alert:
+
+Name: {full_name}
+Amount: ₹{payment.amount}
+Mode: {payment.payment_mode}
+""",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[settings.ADMIN_EMAIL],
+                    fail_silently=True
+                )
+            except Exception as e:
+                print("Admin Payment Email Error:", e)
 
             if action == 'pdf':
                 return redirect('pdf', payment.id)
@@ -178,45 +195,6 @@ def generate_pdf(request, id):
     p.drawString(100, 670, f"Date: {payment.payment_date}")
 
     p.save()
-    return response
-
-
-# ===================== EXCEL =====================
-def export_excel(request):
-    query = request.GET.get('q')
-
-    payments = FeePayment.objects.select_related('student').all()
-
-    if query:
-        payments = payments.filter(
-            Q(student__first_name__icontains=query) |
-            Q(student__last_name__icontains=query)
-        )
-
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    ws.title = "Fee Report"
-
-    ws.append([
-        'Student Name', 'Course', 'Phone',
-        'Amount', 'Mode', 'Date', 'Balance'
-    ])
-
-    for p in payments:
-        ws.append([
-            f"{p.student.first_name} {p.student.last_name}",
-            p.student.course,
-            p.student.phone,
-            p.amount,
-            p.payment_mode,
-            str(p.payment_date),
-            p.student.balance()
-        ])
-
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="CSC_Fee_Report.xlsx"'
-
-    wb.save(response)
     return response
 
 
