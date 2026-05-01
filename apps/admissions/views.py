@@ -23,54 +23,37 @@ def admission_form(request):
 
             full_name = f"{student.first_name} {student.last_name}"
 
-            messages.success(request, "🎉 Admission submitted successfully!")
+            messages.success(request, "Admission submitted successfully!")
 
-            # -------- STUDENT EMAIL --------
-            if student.email and settings.EMAIL_HOST_USER:
-                try:
+            # ✅ SAFE EMAIL (NO CRASH)
+            try:
+                if settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
+
+                    # USER MAIL
+                    if student.email:
+                        send_mail(
+                            subject='CSC Admission Successful',
+                            message=f'Hi {full_name}, your admission is successful.',
+                            from_email=settings.EMAIL_HOST_USER,
+                            recipient_list=[student.email],
+                            fail_silently=True
+                        )
+
+                    # ADMIN MAIL
                     send_mail(
-                        subject='CSC Admission Successful',
-                        message=f"""
-Hi {full_name},
-
-Your admission has been successfully completed!
-
-Course: {student.course}
-Phone: {student.phone}
-
-Welcome to CSC 🚀
-""",
-                        from_email=settings.EMAIL_HOST_USER,
-                        recipient_list=[student.email],
-                        fail_silently=True
-                    )
-                except Exception as e:
-                    print("Student Email Error:", e)
-
-            # -------- ADMIN EMAIL --------
-            if settings.EMAIL_HOST_USER:
-                try:
-                    send_mail(
-                        subject='🚨 New Admission',
-                        message=f"""
-New Admission:
-
-Name: {full_name}
-Email: {student.email}
-Phone: {student.phone}
-Course: {student.course}
-""",
+                        subject='New Admission',
+                        message=f'{full_name} registered successfully.',
                         from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[settings.ADMIN_EMAIL],
                         fail_silently=True
                     )
-                except Exception as e:
-                    print("Admin Email Error:", e)
+
+            except Exception as e:
+                print("EMAIL ERROR:", e)
 
             return redirect('fee')
 
     return render(request, 'admissions/form.html', {'form': form})
-
 
 # ===================== FEE MANAGEMENT =====================
 def fee_management(request):
