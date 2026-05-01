@@ -73,3 +73,55 @@ def student_detail(request, id):
         'total_paid': student.total_paid(),
         'balance': student.balance()
     })
+    
+# ===================== PDF =====================
+def generate_pdf(request, id):
+    from django.shortcuts import get_object_or_404
+    from django.http import HttpResponse
+    from reportlab.pdfgen import canvas
+    from .models import FeePayment
+
+    payment = get_object_or_404(FeePayment, id=id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
+
+    p = canvas.Canvas(response)
+
+    p.drawString(200, 800, "CSC TRAINING")
+    p.drawString(100, 750, f"Name: {payment.student.first_name}")
+    p.drawString(100, 730, f"Amount: ₹{payment.amount}")
+    p.drawString(100, 710, f"Mode: {payment.payment_mode}")
+
+    p.save()
+    return response
+
+
+# ===================== EXCEL =====================
+def export_excel(request):
+    import openpyxl
+    from django.http import HttpResponse
+    from django.db.models import Q
+    from .models import FeePayment
+
+    payments = FeePayment.objects.select_related('student').all()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    ws.append(['Name', 'Course', 'Phone', 'Amount', 'Mode'])
+
+    for p in payments:
+        ws.append([
+            p.student.first_name,
+            p.student.course,
+            p.student.phone,
+            p.amount,
+            p.payment_mode
+        ])
+
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="report.xlsx"'
+
+    wb.save(response)
+    return response    
