@@ -138,10 +138,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-#  fallback included to avoid crash
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER', 'gopikas04082005@gmail.com')
-#EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-EMAIL_HOST_PASSWORD = 'ixqmfouunkhegpbq'
+EMAIL_HOST_USER = 'gopikas04082005@gmail.com'
+EMAIL_HOST_PASSWORD = 'xqmfouunkhegpbq'   # 🔴 your gmail app password
 
 ADMIN_EMAIL = 'gopikas04082005@gmail.com'
 
