@@ -135,6 +135,15 @@ class StudentForm(forms.ModelForm):
             if len(phone) != 10:
                 raise ValidationError("Must be 10 digits.")
         return phone
+    
+    
+    def clean_guardian_name(self):
+        name = self.cleaned_data.get('guardian_name')
+        
+        if not re.match("^[A-Za-z ]+$", name):
+            raise forms.ValidationError("Only letters allowed")
+        
+        return name
 
     def clean(self):
         cleaned_data = super().clean()
