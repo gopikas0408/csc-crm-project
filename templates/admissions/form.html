@@ -211,7 +211,7 @@ cursor: pointer;
 <!-- GLOBAL ERROR -->
 {% if form.errors %}
 <div class="alert alert-danger mt-3">
-    Please correct the errors below.
+    Please fix the errors below.
 </div>
 {% endif %}
 
@@ -377,9 +377,10 @@ Clear Form
 // ================= FORM VALIDATION =================
 
 const form = document.querySelector("form");
+const submitBtn = document.querySelector("#submitBtn");
 
 if (form) {
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", function (e) {
 
         let isValid = true;
 
@@ -409,12 +410,15 @@ if (form) {
             if (error) error.remove();
         }
 
-        // REQUIRED FIELDS
+        // ================= REQUIRED FIELDS =================
         const requiredFields = [
             "first_name",
             "last_name",
+            "email",
             "phone",
-            "course"
+            "course",
+            "gender",
+            "batch"
         ];
 
         requiredFields.forEach(name => {
@@ -430,7 +434,19 @@ if (form) {
             }
         });
 
-        // PHONE VALIDATION
+        // ================= EMAIL VALIDATION =================
+        const email = document.querySelector('[name="email"]');
+
+        if (email && email.value) {
+            const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!pattern.test(email.value)) {
+                showError(email, "Enter valid email address");
+                isValid = false;
+            }
+        }
+
+        // ================= PHONE VALIDATION =================
         const phone = document.querySelector('[name="phone"]');
 
         if (phone && phone.value) {
@@ -440,8 +456,16 @@ if (form) {
             }
         }
 
+        // ================= STOP SUBMIT =================
         if (!isValid) {
             e.preventDefault();
+            return;
+        }
+
+        // ================= PREVENT DOUBLE SUBMIT =================
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Saving...";
         }
     });
 }
@@ -460,10 +484,14 @@ buttons.forEach(btn => {
     });
 });
 
-// AUTO SELECT FIRST STATUS
+// FIXED AUTO SELECT
 window.addEventListener("load", () => {
-    const btn = document.querySelector('.status-btn');
-    if (btn) btn.click();
+    const selected = document.querySelector('.status-btn.active');
+
+    if (!selected) {
+        const btn = document.querySelector('.status-btn');
+        if (btn) btn.click();
+    }
 });
 
 
@@ -492,7 +520,9 @@ if (courseField && feeField) {
 
 function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
-    navLinks.classList.toggle('show');
+    if (navLinks) {
+        navLinks.classList.toggle('show');
+    }
 }
 
 </script>

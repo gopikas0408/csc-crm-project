@@ -1,6 +1,20 @@
 from django.db import models
 from django.db.models import Sum
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
+from django.core.exceptions import ValidationError
+import re
+
+# -------- COMMON VALIDATION --------
+
+def validate_name(value):
+    if not re.match(r'^[A-Za-z ]+$', value):
+        raise ValidationError("Only letters allowed.")
+
+
+def validate_reference(value):
+    if value and not re.match(r'^[A-Za-z0-9]+$', value):
+        raise ValidationError("Invalid reference ID.")
+
 
 
 # ------------------ STUDENT MODEL ------------------
@@ -33,10 +47,10 @@ class Student(models.Model):
         ('Dropped', 'Dropped'),
     ]
 
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, validators=[validate_name])
+    last_name = models.CharField(max_length=100, validators=[validate_name])
 
-    email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
 
     phone = models.CharField(
         max_length=10,
@@ -91,11 +105,15 @@ class Student(models.Model):
             "AI & ML": 35000,
         }
 
-        self.total_fee = fee_map.get(self.course, 0)
+        if self.course not in fee_map:
+            raise ValidationError("Invalid course selected.")
+
+        self.total_fee = fee_map[self.course]
 
         super().save(*args, **kwargs)
 
     # -------- TOTAL PAID --------
+    
     def total_paid(self):
         total = self.payments.aggregate(total=Sum('amount'))['total']
         return total or 0
@@ -122,7 +140,7 @@ class FeePayment(models.Model):
         related_name="payments"
     )
 
-    amount = models.IntegerField()
+    amount = models.IntegerField(validators=[MinValueValidator(1)])
 
     payment_mode = models.CharField(
         max_length=50,
@@ -134,7 +152,8 @@ class FeePayment(models.Model):
     reference_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
+        validators=[validate_reference]
     )
 
     remarks = models.TextField(
@@ -143,6 +162,17 @@ class FeePayment(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def clean(self):
+        if self.student:
+            total_paid = self.student.total_paid()
+            if total_paid + self.amount > self.student.total_fee:
+                raise ValidationError("Payment exceeds total fee.")
+
+    # IMPORTANT FIX
+    def save(self, *args, **kwargs):
+        self.full_clean()   # triggers clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student} - ₹{self.amount}"

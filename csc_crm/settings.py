@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # =========================================================
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temp-key')
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
@@ -88,6 +88,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', ''),
     }
 }
 
@@ -138,10 +142,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'gopikas04082005@gmail.com'
-EMAIL_HOST_PASSWORD = 'xqmfouunkhegpbq'   # 🔴 your gmail app password
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'gopikas04082005@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'xqmfouunkhegpbq')
 
-ADMIN_EMAIL = 'gopikas04082005@gmail.com'
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'gopikas04082005@gmail.com')
 
 
 # =========================================================

@@ -4,64 +4,67 @@ from django.http import HttpResponse
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from django.db.models import Sum, Q
+from django.db import transaction
 
 from .models import Student, FeePayment
 from .forms import StudentForm, FeePaymentForm
 
 from reportlab.pdfgen import canvas
-import openpyxl
 from io import BytesIO
+import openpyxl
 
 
 # ===================== ADMISSION =====================
+
 def admission_form(request):
     form = StudentForm(request.POST or None)
 
     if request.method == 'POST':
         if form.is_valid():
-            student = form.save()
-
-            full_name = f"{student.first_name} {student.last_name}"
-
-            messages.success(request, "Admission submitted successfully!")
-
-            # ✅ SAFE EMAIL (NO CRASH)
             try:
-                if settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
+                with transaction.atomic():
+                    student = form.save()
 
-                    # USER MAIL
-                    if student.email:
-                        send_mail(
-                            subject='CSC Admission Successful',
-                            message=f'Hi {full_name}, your admission is successful.',
-                            from_email=settings.EMAIL_HOST_USER,
-                            recipient_list=[student.email],
-                            fail_silently=True
-                        )
+                    full_name = f"{student.first_name} {student.last_name}"
+                    messages.success(request, "Admission submitted successfully!")
 
-                    # ADMIN MAIL
-                    send_mail(
-                        subject='New Admission',
-                        message=f'{full_name} registered successfully.',
-                        from_email=settings.EMAIL_HOST_USER,
-                        recipient_list=[settings.ADMIN_EMAIL],
-                        fail_silently=True
-                    )
+                    # EMAIL (safe)
+                    if settings.EMAIL_HOST_USER:
+
+                        if student.email:
+                            send_mail(
+                                'CSC Admission Successful',
+                                f'Hi {full_name}, your admission is successful.',
+                                settings.EMAIL_HOST_USER,
+                                [student.email],
+                                fail_silently=True   # avoid crash
+                            )
+
+                        if settings.ADMIN_EMAIL:
+                            send_mail(
+                                'New Admission',
+                                f'{full_name} registered successfully.',
+                                settings.EMAIL_HOST_USER,
+                                [settings.ADMIN_EMAIL],
+                                fail_silently=True
+                            )
+
+                return redirect('fee')
 
             except Exception as e:
-                print("EMAIL ERROR:", e)
-
-            return redirect('fee')
+                messages.error(request, f"Error: {str(e)}")
 
     return render(request, 'admissions/form.html', {'form': form})
 
+
 # ===================== FEE MANAGEMENT =====================
+
 def fee_management(request):
 
     query = request.GET.get('q')
     filter_type = request.GET.get('filter')
 
-    payments = FeePayment.objects.select_related('student').all().order_by('-id')
+    payments = FeePayment.objects.select_related('student').order_by('-id')
 
     if query:
         payments = payments.filter(
@@ -73,13 +76,13 @@ def fee_management(request):
 
     students = Student.objects.all()
 
+    # FILTER
     if filter_type == "pending":
         students = [s for s in students if s.balance() > 0]
-
     elif filter_type == "paid":
         students = [s for s in students if s.balance() == 0]
 
-    total_pending = sum([s.balance() for s in students])
+    total_pending = sum(s.balance() for s in students)
 
     form = FeePaymentForm()
 
@@ -88,66 +91,55 @@ def fee_management(request):
         action = request.POST.get('action')
 
         if form.is_valid():
-            payment = form.save()
+            try:
+                with transaction.atomic():
 
-            full_name = f"{payment.student.first_name} {payment.student.last_name}"
+                    payment = form.save()
+                    student = payment.student
+                    full_name = f"{student.first_name} {student.last_name}"
 
-            # -------- PDF --------
-            buffer = BytesIO()
-            p = canvas.Canvas(buffer)
+                    # -------- PDF --------
+                    buffer = BytesIO()
+                    p = canvas.Canvas(buffer)
 
-            p.drawString(200, 800, "CSC TRAINING INSTITUTE")
-            p.drawString(100, 750, f"Name: {full_name}")
-            p.drawString(100, 730, f"Amount: ₹{payment.amount}")
-            p.drawString(100, 710, f"Mode: {payment.payment_mode}")
-            p.drawString(100, 690, f"Date: {payment.payment_date}")
+                    p.drawString(200, 800, "CSC TRAINING INSTITUTE")
+                    p.drawString(100, 750, f"Name: {full_name}")
+                    p.drawString(100, 730, f"Amount: ₹{payment.amount}")
+                    p.drawString(100, 710, f"Mode: {payment.payment_mode}")
+                    p.drawString(100, 690, f"Date: {payment.payment_date}")
 
-            p.save()
-            buffer.seek(0)
+                    p.save()
+                    buffer.seek(0)
 
-            # -------- STUDENT EMAIL --------
-            if payment.student.email and settings.EMAIL_HOST_USER:
-                try:
-                    email = EmailMessage(
-                        subject="CSC Fee Receipt",
-                        body=f"""
-Hi {full_name},
+                    pdf_file = buffer.getvalue()
 
-Payment of ₹{payment.amount} successful.
+                    # -------- EMAIL --------
+                    if student.email and settings.EMAIL_HOST_USER:
+                        email = EmailMessage(
+                            "CSC Fee Receipt",
+                            f"Hi {full_name}, payment ₹{payment.amount} successful.",
+                            settings.EMAIL_HOST_USER,
+                            [student.email],
+                        )
+                        email.attach('receipt.pdf', pdf_file, 'application/pdf')
+                        email.send(fail_silently=True)
 
-Thank you!
-""",
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[payment.student.email],
-                    )
-                    email.attach('receipt.pdf', buffer.read(), 'application/pdf')
-                    email.send(fail_silently=True)
-                except Exception as e:
-                    print("Payment Email Error:", e)
+                    if settings.ADMIN_EMAIL:
+                        send_mail(
+                            'New Payment Received',
+                            f'{full_name} paid ₹{payment.amount}',
+                            settings.EMAIL_HOST_USER,
+                            [settings.ADMIN_EMAIL],
+                            fail_silently=True
+                        )
 
-            # -------- ADMIN EMAIL --------
-            if settings.EMAIL_HOST_USER:
-                try:
-                    send_mail(
-                        subject='💰 New Payment Received',
-                        message=f"""
-Payment Alert:
+                if action == 'pdf':
+                    return redirect('pdf', payment.id)
 
-Name: {full_name}
-Amount: ₹{payment.amount}
-Mode: {payment.payment_mode}
-""",
-                        from_email=settings.EMAIL_HOST_USER,
-                        recipient_list=[settings.ADMIN_EMAIL],
-                        fail_silently=True
-                    )
-                except Exception as e:
-                    print("Admin Payment Email Error:", e)
+                return redirect('fee')
 
-            if action == 'pdf':
-                return redirect('pdf', payment.id)
-
-            return redirect('fee')
+            except Exception as e:
+                messages.error(request, f"Payment Error: {str(e)}")
 
     return render(request, 'admissions/fee.html', {
         'form': form,
@@ -161,10 +153,9 @@ Mode: {payment.payment_mode}
 
 
 # ===================== PDF =====================
+
 def generate_pdf(request, id):
     payment = get_object_or_404(FeePayment, id=id)
-
-    full_name = f"{payment.student.first_name} {payment.student.last_name}"
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
@@ -172,33 +163,30 @@ def generate_pdf(request, id):
     p = canvas.Canvas(response)
 
     p.drawString(200, 800, "CSC TRAINING")
-    p.drawString(100, 750, f"Name: {full_name}")
-    p.drawString(100, 730, f"Course: {payment.student.course}")
-    p.drawString(100, 710, f"Amount: ₹{payment.amount}")
-    p.drawString(100, 690, f"Mode: {payment.payment_mode}")
-    p.drawString(100, 670, f"Date: {payment.payment_date}")
+    p.drawString(100, 750, f"Name: {payment.student}")
+    p.drawString(100, 730, f"Amount: ₹{payment.amount}")
 
     p.save()
     return response
 
 
 # ===================== STUDENT DETAIL =====================
+
 def student_detail(request, id):
     student = get_object_or_404(Student, id=id)
 
-    payments = student.payments.all()
-
     return render(request, 'admissions/student_detail.html', {
         'student': student,
-        'payments': payments,
+        'payments': student.payments.all(),
         'total_paid': student.total_paid(),
         'balance': student.balance()
     })
 
 
-# ===================== EXCEL =====================
+# ===================== EXPORT EXCEL =====================
+
 def export_excel(request):
-    payments = FeePayment.objects.select_related('student').all()
+    payments = FeePayment.objects.select_related('student')
 
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -208,7 +196,7 @@ def export_excel(request):
 
     for p in payments:
         ws.append([
-            p.student.first_name,
+            str(p.student),
             p.student.course,
             p.student.phone,
             p.amount,

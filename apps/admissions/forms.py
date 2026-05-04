@@ -1,7 +1,20 @@
 from django import forms
 from .models import Student, FeePayment
+import re
+from django.core.exceptions import ValidationError
 
 
+#--------COMMON SANITIZER--------
+
+def sanitize_input(value):
+    if value:
+        value = value.strip() 
+       #Prevent Script Injection
+        if "<script" in value.lower():
+            raise ValidationError("Invalid input detected.")
+        return value
+    
+    
 # -------- Student Form --------
 
 class StudentForm(forms.ModelForm):
@@ -88,32 +101,51 @@ class StudentForm(forms.ModelForm):
         
         #--------VALIDATIONS--------
         
+    def clean_first_name(self):
+        name = sanitize_input(self.cleaned_data.get('first_name'))
+        if not re.match(r'^[A-Za-z ]+$', name):
+            raise ValidationError("Only letters allowed in first name.")
+        return name
+
+    def clean_last_name(self):
+        name = sanitize_input(self.cleaned_data.get('last_name'))
+        if not re.match(r'^[A-Za-z ]+$', name):
+            raise ValidationError("Only letters allowed in last name.")
+        return name
+
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = sanitize_input(self.cleaned_data.get('email'))
         if Student.objects.filter(email=email).exists():
-            raise forms.ValidationError("A student with this email already exists.")
+            raise ValidationError("Email already exists.")
         return email
-    
+
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
-        if not phone:
-            raise forms.ValidationError("Phone number is required.")
         if not phone.isdigit():
-            raise forms.ValidationError("only numbers are allowed.")
+            raise ValidationError("Only numbers allowed.")
         if len(phone) != 10:
-            raise forms.ValidationError("Phone number must be exactly 10 digits.")
+            raise ValidationError("Must be 10 digits.")
         return phone
-    
+
     def clean_guardian_phone(self):
         phone = self.cleaned_data.get('guardian_phone')
-
         if phone:
             if not phone.isdigit():
-                raise forms.ValidationError("Only numbers allowed.")
+                raise ValidationError("Only numbers allowed.")
             if len(phone) != 10:
-                raise forms.ValidationError("Must be exactly 10 digits.")
-
+                raise ValidationError("Must be 10 digits.")
         return phone
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # sanitize all text fields
+        for field in ['address', 'guardian_name']:
+            value = cleaned_data.get(field)
+            if value:
+                cleaned_data[field] = sanitize_input(value)
+
+        return cleaned_data
 
 # -------- Fee Payment Form --------
 
@@ -172,7 +204,15 @@ class FeePaymentForm(forms.ModelForm):
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
         if amount is None:
-            raise forms.ValidationError("Amount is required.")
+            raise ValidationError("Amount required.")
         if amount <= 0:
-            raise forms.ValidationError("Amount must be greater than 0")
+            raise ValidationError("Must be greater than 0.")
         return amount
+
+    def clean_reference_id(self):
+        ref = self.cleaned_data.get('reference_id')
+        if ref:
+            ref = sanitize_input(ref)
+            if not re.match(r'^[A-Za-z0-9]+$', ref):
+                raise ValidationError("Invalid reference ID.")
+        return ref

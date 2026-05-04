@@ -1,482 +1,529 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CSC CRM - Fee</title>
+    <title>CSC CRM - Fee</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
+    <style>
+        :root {
+            --primary: #262170;
+            --secondary: #FEF200;
+            --white: #ffffff;
+            --light: #f8f9fc;
+            --border: #e4e7ec;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
 
-:root {
---primary: #262170;
---secondary: #FEF200;
---white: #ffffff;
---light: #f8f9fc;
---border: #e4e7ec;
---text: #1f2937;
---muted: #6b7280;
---success: #16a34a;
---danger: #dc2626;
---shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
+        /* BODY */
+        body {
+            background: var(--light);
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-/* BODY */
-body {
-background: var(--light);
-font-family: 'Segoe UI', sans-serif;
-}
+        /* NAVBAR */
+        .navbar {
+            background: linear-gradient(90deg, var(--primary), #3a3490);
+            padding: 12px 20px;
+        }
 
-/* NAVBAR */
-.navbar {
-background: linear-gradient(90deg, var(--primary), #3a3490);
-padding: 12px 20px;
-}
+        .navbar a {
+            color: var(--white);
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-.navbar a {
-color: var(--white);
-margin-left: 20px;
-text-decoration: none;
-font-weight: 500;
-}
+        .navbar a:hover {
+            color: var(--secondary);
+        }
 
-.navbar a:hover {
-color: var(--secondary);
-}
+        /* CARD */
+        .card-box {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 25px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--secondary);
+            transition: 0.3s;
+        }
 
-/* CARD */
-.card-box {
-background: var(--white);
-padding: 25px;
-border-radius: 16px;
-margin-top: 25px;
-box-shadow: var(--shadow);
-border-left: 5px solid var(--secondary);
-transition: 0.3s;
-}
+        .card-box:hover {
+            transform: translateY(-3px);
+        }
 
-.card-box:hover {
-transform: translateY(-3px);
-}
+        /* DASHBOARD CARDS */
+        .top-card {
+            padding: 20px;
+            border-radius: 14px;
+            color: var(--white);
+            transition: 0.3s;
+        }
 
-/* DASHBOARD CARDS */
-.top-card {
-padding: 20px;
-border-radius: 14px;
-color: var(--white);
-transition: 0.3s;
-}
+        .top-card:hover {
+            transform: scale(1.05);
+        }
 
-.top-card:hover {
-transform: scale(1.05);
-}
+        .green {
+            background: var(--success);
+        }
 
-.green { background: var(--success); }
-.red { background: var(--danger); }
-.blue { background: var(--primary); }
+        .red {
+            background: var(--danger);
+        }
 
-/* INPUT */
-input, select, textarea {
-width: 100%;
-padding: 10px;
-border-radius: 10px;
-border: 1px solid var(--border);
-}
+        .blue {
+            background: var(--primary);
+        }
 
-input:focus, select:focus, textarea:focus {
-border-color: var(--primary);
-box-shadow: 0 0 0 2px rgba(38,33,112,0.1);
-}
+        /* INPUT */
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
 
-/* BUTTON */
-.btn-primary {
-background: var(--primary);
-border: none;
-border-radius: 10px;
-}
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(38, 33, 112, 0.1);
+        }
 
-.btn-primary:hover {
-background: #1b174f;
-transform: translateY(-2px);
-}
+        /* BUTTON */
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+        }
 
-.btn-secondary {
-background: var(--secondary);
-color: var(--primary);
-}
+        .btn-primary:hover {
+            background: #1b174f;
+            transform: translateY(-2px);
+        }
 
-.btn-secondary:hover {
-transform: translateY(-2px);
-}
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--primary);
+        }
 
-/* TABLE */
-.table thead {
-background: var(--primary);
-color: var(--white);
-}
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
 
-.table tbody tr:hover {
-background: #eef2ff;
-}
+        /* TABLE */
+        .table thead {
+            background: var(--primary);
+            color: var(--white);
+        }
 
-/* CLICKABLE STUDENT */
-.student-link {
-color: var(--primary);
-font-weight: 600;
-text-decoration: none;
-}
+        .table tbody tr:hover {
+            background: #eef2ff;
+        }
 
-.student-link:hover {
-color: var(--secondary);
-text-decoration: underline;
-}
+        /* CLICKABLE STUDENT */
+        .student-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .student-link:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
 
 
-/* EXCEL BUTTON */
-.export-btn {
-background: var(--success);
-border: none;
-border-radius: 8px;
-padding: 10px 18px;
-font-weight: 500;
-transition: 0.3s;
-}
+        /* EXCEL BUTTON */
+        .export-btn {
+            background: var(--success);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
 
-.export-btn:hover {
-background: #15803d;
-transform: translateY(-2px);
-}
-/* DEFAULT (DESKTOP) */
-#navLinks {
-    display: flex;
-    gap: 15px;
-}
+        .export-btn:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+        }
 
-/*JS ERROR*/
-.js-error {
-    font-size: 14px;
-    margin-top: 5px;
-}
+        /* DEFAULT (DESKTOP) */
+        #navLinks {
+            display: flex;
+            gap: 15px;
+        }
 
-/* MOBILE */
-@media (max-width: 768px) {
+        /*JS ERROR*/
+        .js-error {
+            font-size: 14px;
+            margin-top: 5px;
+        }
 
-.menu-toggle {
-    display: block;
-    font-size: 24px;
-    background: none;
-    border: none;
-    color: white; /* FIXED */
-    margin-top: 10px;
-}
+        /* MOBILE */
+        @media (max-width: 768px) {
 
-#navLinks {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    background: var(--primary);
-    border-radius: 10px;
-    margin-top: 10px;
-}
+            .menu-toggle {
+                display: block;
+                font-size: 24px;
+                background: none;
+                border: none;
+                color: white;
+                /* FIXED */
+                margin-top: 10px;
+            }
 
-#navLinks.show {
-    display: flex;
-}
+            #navLinks {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: var(--primary);
+                border-radius: 10px;
+                margin-top: 10px;
+            }
 
-#navLinks a {
-    padding: 12px;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.2);
-}
+            #navLinks.show {
+                display: flex;
+            }
 
-}
-</style>
+            #navLinks a {
+                padding: 12px;
+                text-align: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar d-flex justify-content-between align-items-center">
-    <b class="text-white fw-bold">
-        <span style="color: yellow;">CSC CRM</span>
-    </b>
-    <!--MENU BUTTON-->
-    <button class="menu-toggle d-md-none" onclick="toggleMenu()">☰</button>
-    
-
-    <!-- NAV LINKS -->
-    <div id="navLinks" class="d-md-flex">
-        <a href="/">Student Registration</a>
-        <a href="#">Student List</a>
-        <a href="/fee/">Fee Management</a>
-        <a href="#">Search</a>
-    </div>
-</div>
-
-<div class="container">
-
-<!-- SEARCH -->
-<form method="GET" class="mt-4">
-    <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
-    
-</form>
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-
-    <div></div> 
-
-    <a href="{% url 'export_excel' %}?q={{ query }}&filter={{ filter_type }}"
-       class="btn btn-success export-btn">
-       ⬇ Export Excel
-    </a>
-
-</div>
+    <!-- NAVBAR -->
+    <div class="navbar d-flex justify-content-between align-items-center">
+        <b class="text-white fw-bold">
+            <span style="color: yellow;">CSC CRM</span>
+        </b>
+        <!--MENU BUTTON-->
+        <button class="menu-toggle d-md-none" onclick="toggleMenu()">☰</button>
 
 
-<!-- FILTER -->
-<div class="mt-2">
-    <a href="/fee/" class="btn btn-secondary btn-sm">All</a>
-    <a href="/fee/?filter=pending" class="btn btn-danger btn-sm">Pending</a>
-    <a href="/fee/?filter=paid" class="btn btn-success btn-sm">Paid</a>
-</div>
-
-<!-- DASHBOARD -->
-<div class="row mt-3 text-center">
-
-    <div class="col-md-4">
-        <div class="top-card green">
-            <h6>Total Collected</h6>
-            <h4>₹{{ total_amount }}</h4>
+        <!-- NAV LINKS -->
+        <div id="navLinks" class="d-md-flex">
+            <a href="/">Student Registration</a>
+            <a href="#">Student List</a>
+            <a href="/fee/">Fee Management</a>
+            <a href="#">Search</a>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="top-card red">
-            <h6>Outstanding</h6>
-            <h4>₹{{ total_pending }}</h4>
+    <div class="container">
+
+        <!-- SEARCH -->
+        <form method="GET" class="mt-4">
+            <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search student..." class="form-control">
+
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div></div>
+
+            <a href="{% url 'export_excel' %}?q={{ query }}&filter={{ filter_type }}"
+                class="btn btn-success export-btn">
+                ⬇ Export Excel
+            </a>
+
         </div>
+
+
+        <!-- FILTER -->
+        <div class="mt-2">
+            <a href="/fee/" class="btn btn-secondary btn-sm">All</a>
+            <a href="/fee/?filter=pending" class="btn btn-danger btn-sm">Pending</a>
+            <a href="/fee/?filter=paid" class="btn btn-success btn-sm">Paid</a>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="row mt-3 text-center">
+
+            <div class="col-md-4">
+                <div class="top-card green">
+                    <h6>Total Collected</h6>
+                    <h4>₹{{ total_amount }}</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="top-card red">
+                    <h6>Outstanding</h6>
+                    <h4>₹{{ total_pending }}</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="top-card blue">
+                    <h6>Receipts</h6>
+                    <h4>{{ payments|length }}</h4>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FORM -->
+        <div class="card-box">
+            <h5>💰 Record Payment</h5>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <label>Student</label>
+                        {{ form.student }}
+
+                        <label>Amount</label>
+                        {{ form.amount }}
+
+                        <label>Reference ID</label>
+                        {{ form.reference_id }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Date</label>
+                        {{ form.payment_date }}
+
+                        <label>Mode</label>
+                        {{ form.payment_mode }}
+
+                        <label>Remarks</label>
+                        {{ form.remarks }}
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button id="saveBtn" name="action" value="save" class="btn btn-secondary me-2">Save</button>
+                    <button id="pdfBtn" name="action" value="pdf" class="btn btn-primary">Save & PDF</button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- PAYMENT HISTORY -->
+        <div class="card-box">
+            <h5>📜 Payment History</h5>
+
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Mode</th>
+                        <th>Receipt</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% if payments %}
+                    {% for p in payments %}
+                    <tr>
+
+                        <td>
+                            <a href="{% url 'student_detail' p.student.id %}" class="student-link">
+                                {{ p.student.first_name }} {{ p.student.last_name }}
+                            </a>
+                        </td>
+
+                        <td>{{ p.payment_date }}</td>
+                        <td>₹{{ p.amount }}</td>
+                        <td>{{ p.payment_mode }}</td>
+
+                        <td>
+                            <a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">View</a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-muted text-center">No payments found</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- STATUS -->
+        <div class="card-box">
+            <h5>📊 Student Fee Status</h5>
+
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total</th>
+                        <th>Paid</th>
+                        <th>Pending</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+
+                        <td>{{ s.first_name }} {{ s.last_name }}</td>
+
+                        <td>₹{{ s.total_fee }}</td>
+                        <td>₹{{ s.total_paid }}</td>
+
+                        <td class="{% if s.balance == 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ s.balance }}
+                        </td>
+
+                        <td>
+                            {% if s.balance == 0 %}
+                            <span class="badge bg-success">Paid</span>
+                            {% else %}
+                            <span class="badge bg-danger">Pending</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
     </div>
 
-    <div class="col-md-4">
-        <div class="top-card blue">
-            <h6>Receipts</h6>
-            <h4>{{ payments|length }}</h4>
-        </div>
-    </div>
+    <script>
 
-</div>
+        // ================= PAYMENT FORM VALIDATION =================
 
-<!-- FORM -->
-<div class="card-box">
-<h5>💰 Record Payment</h5>
+        const form = document.querySelector("form[method='POST']");
+        const saveBtn = document.getElementById("saveBtn");
+        const pdfBtn = document.getElementById("pdfBtn");
 
-<form method="POST">
-{% csrf_token %}
+        if (form) {
+            form.addEventListener("submit", function (e) {
 
-<div class="row">
+                let isValid = true;
 
-<div class="col-md-6">
-<label>Student</label>
-{{ form.student }}
+                function showError(input, message) {
+                    input.style.border = "1px solid red";
 
-<label>Amount</label>
-{{ form.amount }}
+                    let parent = input.parentNode;
+                    let error = parent.querySelector(".js-error");
 
-<label>Reference ID</label>
-{{ form.reference_id }}
-</div>
+                    if (!error) {
+                        error = document.createElement("div");
+                        error.className = "js-error text-danger";
+                        parent.appendChild(error);
+                    }
 
-<div class="col-md-6">
-<label>Date</label>
-{{ form.payment_date }}
+                    error.innerText = message;
+                }
 
-<label>Mode</label>
-{{ form.payment_mode }}
+                function clearError(input) {
+                    input.style.border = "1px solid #e4e7ec";
 
-<label>Remarks</label>
-{{ form.remarks }}
-</div>
+                    let parent = input.parentNode;
+                    let error = parent.querySelector(".js-error");
 
-</div>
+                    if (error) error.remove();
+                }
 
-<div class="d-flex justify-content-end mt-4">
-<button name="action" value="save" class="btn btn-secondary me-2">Save</button>
-<button name="action" value="pdf" class="btn btn-primary">Save & PDF</button>
-</div>
+                // -------- INPUTS --------
+                const student = document.querySelector('[name="student"]');
+                const amount = document.querySelector('[name="amount"]');
+                const date = document.querySelector('[name="payment_date"]');
+                const ref = document.querySelector('[name="reference_id"]');
 
-</form>
-</div>
+                // -------- STUDENT --------
+                if (!student.value) {
+                    showError(student, "Select student");
+                    isValid = false;
+                } else {
+                    clearError(student);
+                }
 
-<!-- PAYMENT HISTORY -->
-<div class="card-box">
-<h5>📜 Payment History</h5>
+                // -------- AMOUNT --------
+                if (!amount.value.trim()) {
+                    showError(amount, "Enter amount");
+                    isValid = false;
+                } else if (!/^\d+$/.test(amount.value)) {
+                    showError(amount, "Only numbers allowed");
+                    isValid = false;
+                } else if (parseInt(amount.value) <= 0) {
+                    showError(amount, "Must be greater than 0");
+                    isValid = false;
+                } else {
+                    clearError(amount);
+                }
 
-<table class="table text-center">
-<thead>
-<tr>
-<th>Student</th>
-<th>Date</th>
-<th>Amount</th>
-<th>Mode</th>
-<th>Receipt</th>
-</tr>
-</thead>
+                // -------- DATE --------
+                if (!date.value) {
+                    showError(date, "Select date");
+                    isValid = false;
+                } else {
+                    clearError(date);
+                }
 
-<tbody>
-{% for p in payments %}
-<tr>
+                // -------- REFERENCE ID --------
+                if (ref && ref.value) {
+                    if (!/^[A-Za-z0-9]+$/.test(ref.value)) {
+                        showError(ref, "Invalid reference ID");
+                        isValid = false;
+                    } else {
+                        clearError(ref);
+                    }
+                }
 
-<td>
-<a href="{% url 'student_detail' p.student.id %}" class="student-link">
-{{ p.student.first_name }} {{ p.student.last_name }}
-</a>
-</td>
+                if (!isValid) {
+                    e.preventDefault();
+                    return;
+                }
 
-<td>{{ p.payment_date }}</td>
-<td>₹{{ p.amount }}</td>
-<td>{{ p.payment_mode }}</td>
+                // -------- DOUBLE SUBMIT FIX --------
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerText = "Saving...";
+                }
 
-<td>
-<a href="{% url 'pdf' p.id %}" class="btn btn-sm btn-primary">View</a>
-</td>
+                if (pdfBtn) {
+                    pdfBtn.disabled = true;
+                    pdfBtn.innerText = "Processing...";
+                }
+            });
+        }
 
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
 
-<!-- STATUS -->
-<div class="card-box">
-<h5>📊 Student Fee Status</h5>
+        // ================= MENU =================
 
-<table class="table text-center">
-<thead>
-<tr>
-<th>Name</th>
-<th>Total</th>
-<th>Paid</th>
-<th>Pending</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody>
-{% for s in students %}
-<tr>
-
-<td>{{ s.first_name }} {{ s.last_name }}</td>
-
-<td>₹{{ s.total_fee }}</td>
-<td>₹{{ s.total_paid }}</td>
-
-<td class="{% if s.balance == 0 %}text-success{% else %}text-danger{% endif %}">
-₹{{ s.balance }}
-</td>
-
-<td>
-{% if s.balance == 0 %}
-<span class="badge bg-success">Paid</span>
-{% else %}
-<span class="badge bg-danger">Pending</span>
-{% endif %}
-</td>
-
-</tr>
-{% endfor %}
-</tbody>
-
-</table>
-</div>
-
-</div>
-
-<script>
-
-// ================= PAYMENT FORM VALIDATION =================
-
-const form = document.querySelector("form[method='POST']");
-
-if (form) {
-    form.addEventListener("submit", function(e) {
-
-        let isValid = true;
-
-        function showError(input, message) {
-            input.style.border = "1px solid red";
-
-            let parent = input.parentNode;
-
-            let error = parent.querySelector(".js-error");
-
-            if (!error) {
-                error = document.createElement("div");
-                error.className = "js-error text-danger";
-                parent.appendChild(error);
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('show');
             }
-
-            error.innerText = message;
         }
-
-        function clearError(input) {
-            input.style.border = "1px solid #e4e7ec";
-
-            let parent = input.parentNode;
-            let error = parent.querySelector(".js-error");
-
-            if (error) error.remove();
-        }
-
-        // -------- INPUTS --------
-        const student = document.querySelector('[name="student"]');
-        const amount = document.querySelector('[name="amount"]');
-        const date = document.querySelector('[name="payment_date"]');
-
-        // -------- STUDENT --------
-        if (!student.value) {
-            showError(student, "Please select a student");
-            isValid = false;
-        } else {
-            clearError(student);
-        }
-
-        // -------- AMOUNT --------
-        if (!amount.value.trim()) {
-            showError(amount, "Enter amount");
-            isValid = false;
-        } else if (parseFloat(amount.value) <= 0) {
-            showError(amount, "Amount must be greater than 0");
-            isValid = false;
-        } else {
-            clearError(amount);
-        }
-
-        // -------- DATE --------
-        if (!date.value) {
-            showError(date, "Select payment date");
-            isValid = false;
-        } else {
-            clearError(date);
-        }
-
-        // -------- STOP SUBMIT --------
-        if (!isValid) {
-            e.preventDefault();
-        }
-
-    });
-}
-
-
-// ================= MENU =================
-
-function toggleMenu() {
-    const navLinks = document.getElementById('navLinks');
-    navLinks.classList.toggle('show');
-}
-
-</script>
+    </script>
 </body>
+
 </html>

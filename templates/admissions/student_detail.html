@@ -1,202 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Student Details</title>
+    <title>Student Details</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-:root {
---primary: #262170;
---secondary: #FEF200;
---white: #ffffff;
---light: #f8f9fc;
---border: #e4e7ec;
---text: #1f2937;
---muted: #6b7280;
---success: #16a34a;
---danger: #dc2626;
---shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
+    <style>
+        :root {
+            --primary: #262170;
+            --secondary: #FEF200;
+            --white: #ffffff;
+            --light: #f8f9fc;
+            --border: #e4e7ec;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
 
-body {
-background: var(--light);
-font-family: 'Segoe UI', sans-serif;
-color: var(--text);
-}
+        body {
+            background: var(--light);
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--text);
+        }
 
-.navbar {
-background: linear-gradient(90deg, var(--primary), #3a3490);
-padding: 12px 20px;
-}
+        .navbar {
+            background: linear-gradient(90deg, var(--primary), #3a3490);
+            padding: 12px 20px;
+        }
 
-.navbar a {
-color: var(--white);
-margin-left: 20px;
-text-decoration: none;
-}
+        .navbar a {
+            color: var(--white);
+            margin-left: 20px;
+            text-decoration: none;
+        }
 
-.card-box {
-background: var(--white);
-padding: 25px;
-border-radius: 16px;
-margin-top: 30px;
-box-shadow: var(--shadow);
-border-left: 5px solid var(--secondary);
-}
+        .card-box {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--secondary);
+        }
 
-.top-card {
-border-radius: 14px;
-padding: 18px;
-color: var(--white);
-}
+        .top-card {
+            border-radius: 14px;
+            padding: 18px;
+            color: var(--white);
+        }
 
-.bg-blue { background: var(--primary); }
-.bg-green { background: var(--success); }
-.bg-red { background: var(--danger); }
+        .bg-blue {
+            background: var(--primary);
+        }
 
-.table thead {
-background: var(--primary);
-color: var(--white);
-}
+        .bg-green {
+            background: var(--success);
+        }
 
-.badge-upi {
-background: #e0d9ff;
-padding: 6px 10px;
-border-radius: 8px;
-}
+        .bg-red {
+            background: var(--danger);
+        }
 
-.badge-cash {
-background: #fff3bf;
-padding: 6px 10px;
-border-radius: 8px;
-}
+        .table thead {
+            background: var(--primary);
+            color: var(--white);
+        }
 
-.back-btn {
-background: var(--muted);
-color: white;
-}
+        .badge-upi {
+            background: #e0d9ff;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
 
-.title {
-font-weight: 700;
-color: var(--primary);
-}
+        .badge-cash {
+            background: #fff3bf;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
 
-.info-text {
-color: var(--muted);
-}
-</style>
+        .back-btn {
+            background: var(--muted);
+            color: white;
+        }
+
+        .title {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .info-text {
+            color: var(--muted);
+        }
+
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .card-box {
+                margin-top: 15px;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar d-flex justify-content-between">
-    <b class="text-white"><span style="color: yellow;">CSC CRM</span></b>
-    <div>
-        <a href="/">Register</a>
-        <a href="/fee/">Fee</a>
-    </div>
-</div>
-
-<div class="container">
-
-<div class="card-box">
-
-<!-- BACK -->
-<div class="mb-3">
-    <a href="/fee/" class="btn back-btn">⬅ Back</a>
-</div>
-
-<!-- STUDENT -->
-<h3 class="title mb-3">
-👤 {{ student.first_name }} {{ student.last_name }}
-</h3>
-
-<p class="info-text"><strong>Email:</strong> {{ student.email|default:"Not provided" }}</p>
-<p class="info-text"><strong>Course:</strong> {{ student.course }}</p>
-<p class="info-text"><strong>Phone:</strong> {{ student.phone }}</p>
-
-<!-- SUMMARY -->
-<div class="row text-center mt-4 mb-4">
-
-    <div class="col-md-4">
-        <div class="top-card bg-blue">
-            <h6>Total Fee</h6>
-            <h4>₹{{ student.total_fee }}</h4>
+    <!-- NAVBAR -->
+    <div class="navbar d-flex justify-content-between">
+        <b class="text-white"><span style="color: yellow;">CSC CRM</span></b>
+        <div>
+            <a href="/">Register</a>
+            <a href="/fee/">Fee</a>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="top-card bg-green">
-            <h6>Total Paid</h6>
-            <h4>₹{{ total_paid }}</h4>
+    <div class="container">
+
+        <div class="card-box">
+
+            <!-- BACK -->
+            <div class="mb-3">
+                <a href="/fee/" class="btn back-btn">⬅ Back</a>
+            </div>
+
+            <!-- STUDENT -->
+            <h3 class="title mb-3">
+                👤 {{ student.first_name }} {{ student.last_name }}
+            </h3>
+
+            <p class="info-text"><strong>Email:</strong> {{ student.email|default:"Not provided" }}</p>
+            <p class="info-text"><strong>Course:</strong> {{ student.course }}</p>
+            <p class="info-text"><strong>Phone:</strong> {{ student.phone }}</p>
+
+            <!-- SUMMARY -->
+            <div class="row text-center mt-4 mb-4">
+
+                <div class="col-md-4">
+                    <div class="top-card bg-blue">
+                        <h6>Total Fee</h6>
+                        <h4>₹{{ student.total_fee }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="top-card bg-green">
+                        <h6>Total Paid</h6>
+                        <h4>₹{{ total_paid }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="top-card bg-red">
+                        <h6>Pending</h6>
+                        <h4>₹{{ balance }}</h4>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- STATUS ALERT -->
+            <div class="alert text-center {% if balance == 0 %}alert-success{% else %}alert-warning{% endif %}"> {% if
+                balance == 0 %} ✅ Fully Paid {% else %} ⚠ Payment Pending {% endif %} </div>
+
+            <!-- EXTRA -->
+            <div class="mb-3">
+                <strong>Total Transactions:</strong> {{ payments|length }}
+            </div>
+
+            <!-- PAYMENT TABLE -->
+            <h5 class="mb-3">📜 Payment History</h5>
+
+            <div class="table-responsive">
+                <table class="table text-center align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Mode</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for p in payments %}
+                        <tr>
+
+                            <td>₹{{ p.amount }}</td>
+
+                            <td>
+                                {% if p.payment_mode == 'UPI' %}
+                                <span class="badge-upi">UPI</span>
+                                {% elif p.payment_mode == 'Cash' %}
+                                <span class="badge-cash">Cash</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ p.payment_mode }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ p.payment_date }}</td>
+
+                        </tr>
+                        {% endfor %} {% else %} <tr>
+                            <td colspan="3" class="text-muted text-center">No payments yet</td>
+                        </tr> 
+                        {% endif %}
+                    </tbody>
+
+                </table>
+            </div>
+
         </div>
+
     </div>
-
-    <div class="col-md-4">
-        <div class="top-card bg-red">
-            <h6>Pending</h6>
-            <h4>₹{{ balance }}</h4>
-        </div>
-    </div>
-
-</div>
-
-<!-- EXTRA -->
-<div class="mb-3">
-    <strong>Total Transactions:</strong> {{ payments|length }}
-</div>
-
-<!-- PAYMENT TABLE -->
-<h5 class="mb-3">📜 Payment History</h5>
-
-<div class="table-responsive">
-<table class="table text-center align-middle">
-
-<thead>
-<tr>
-<th>Amount</th>
-<th>Mode</th>
-<th>Date</th>
-</tr>
-</thead>
-
-<tbody>
-{% for p in payments %}
-<tr>
-
-<td>₹{{ p.amount }}</td>
-
-<td>
-{% if p.payment_mode == 'UPI' %}
-<span class="badge-upi">UPI</span>
-{% elif p.payment_mode == 'Cash' %}
-<span class="badge-cash">Cash</span>
-{% else %}
-<span class="badge bg-secondary">{{ p.payment_mode }}</span>
-{% endif %}
-</td>
-
-<td>{{ p.payment_date }}</td>
-
-</tr>
-{% empty %}
-<tr>
-<td colspan="3">No payments yet</td>
-</tr>
-{% endfor %}
-</tbody>
-
-</table>
-</div>
-
-</div>
-
-</div>
 
 </body>
+
 </html>
