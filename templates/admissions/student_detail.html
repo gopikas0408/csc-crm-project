@@ -98,7 +98,6 @@
             color: var(--muted);
         }
 
-
         /* MOBILE */
         @media (max-width: 768px) {
             .card-box {
@@ -164,10 +163,6 @@
 
             </div>
 
-            <!-- STATUS ALERT -->
-            <div class="alert text-center {% if balance == 0 %}alert-success{% else %}alert-warning{% endif %}"> {% if
-                balance == 0 %} ✅ Fully Paid {% else %} ⚠ Payment Pending {% endif %} </div>
-
             <!-- EXTRA -->
             <div class="mb-3">
                 <strong>Total Transactions:</strong> {{ payments|length }}
@@ -206,10 +201,11 @@
                             <td>{{ p.payment_date }}</td>
 
                         </tr>
-                        {% endfor %} {% else %} <tr>
-                            <td colspan="3" class="text-muted text-center">No payments yet</td>
-                        </tr> 
-                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No payments yet</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
 
                 </table>

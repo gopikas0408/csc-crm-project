@@ -15,5 +15,6 @@ urlpatterns = [
     path('export-excel/', views.export_excel, name='export_excel'),
 
     #  Student Detail
-    path('student/<int:id>/', student_detail, name='student_detail'),
+   # path('student/<int:id>/', student_detail, name='student_detail'),
+   path('student/<int:id>/', views.student_detail, name='student_detail')
 ]

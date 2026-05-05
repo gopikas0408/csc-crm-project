@@ -172,14 +172,21 @@ def generate_pdf(request, id):
 
 # ===================== STUDENT DETAIL =====================
 
+from django.shortcuts import render, get_object_or_404
+from .models import Student
+
 def student_detail(request, id):
     student = get_object_or_404(Student, id=id)
 
+    payments = student.payments.all()
+    total_paid = student.total_paid()
+    balance = student.balance()
+
     return render(request, 'admissions/student_detail.html', {
         'student': student,
-        'payments': student.payments.all(),
-        'total_paid': student.total_paid(),
-        'balance': student.balance()
+        'payments': payments,
+        'total_paid': total_paid,
+        'balance': balance
     })
 
 
